@@ -1,0 +1,186 @@
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CustomUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game:GetService("CoreGui")
+
+-- Main Frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 250, 0, 240)
+mainFrame.Position = UDim2.new(0.5, -125, 0.5, -120)
+mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+title.BorderSizePixel = 0
+title.Text = "Menu"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 18
+title.Font = Enum.Font.GothamBold
+title.Parent = mainFrame
+
+-- Minimize Button
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -70, 0, 5)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+minimizeBtn.Text = "-"
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeBtn.TextSize = 20
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.BorderSizePixel = 0
+minimizeBtn.Parent = title
+
+-- Close Button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.TextSize = 16
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.BorderSizePixel = 0
+closeBtn.Parent = title
+
+-- Boss Spawn Toggle Button
+local bossToggleBtn = Instance.new("TextButton")
+bossToggleBtn.Size = UDim2.new(0, 220, 0, 45)
+bossToggleBtn.Position = UDim2.new(0, 15, 0, 55)
+bossToggleBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 220)
+bossToggleBtn.Text = "Boss Spawn UI: OFF"
+bossToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+bossToggleBtn.TextSize = 16
+bossToggleBtn.Font = Enum.Font.GothamSemibold
+bossToggleBtn.BorderSizePixel = 0
+bossToggleBtn.Parent = mainFrame
+
+-- Night Market Toggle Button
+local marketToggleBtn = Instance.new("TextButton")
+marketToggleBtn.Size = UDim2.new(0, 220, 0, 45)
+marketToggleBtn.Position = UDim2.new(0, 15, 0, 115)
+marketToggleBtn.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
+marketToggleBtn.Text = "Night Market UI: OFF"
+marketToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+marketToggleBtn.TextSize = 16
+marketToggleBtn.Font = Enum.Font.GothamSemibold
+marketToggleBtn.BorderSizePixel = 0
+marketToggleBtn.Parent = mainFrame
+
+-- Teleporter Toggle Button
+local teleportToggleBtn = Instance.new("TextButton")
+teleportToggleBtn.Size = UDim2.new(0, 220, 0, 45)
+teleportToggleBtn.Position = UDim2.new(0, 15, 0, 175)
+teleportToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 120, 60)
+teleportToggleBtn.Text = "Teleporter UI: OFF"
+teleportToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+teleportToggleBtn.TextSize = 16
+teleportToggleBtn.Font = Enum.Font.GothamSemibold
+teleportToggleBtn.BorderSizePixel = 0
+teleportToggleBtn.Parent = mainFrame
+
+-- Minimized Circle Button
+local miniCircle = Instance.new("TextButton")
+miniCircle.Size = UDim2.new(0, 60, 0, 60)
+miniCircle.Position = UDim2.new(0, 20, 0, 20)
+miniCircle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+miniCircle.Text = "+"
+miniCircle.TextColor3 = Color3.fromRGB(255, 255, 255)
+miniCircle.TextSize = 30
+miniCircle.Font = Enum.Font.GothamBold
+miniCircle.BorderSizePixel = 2
+miniCircle.BorderColor3 = Color3.fromRGB(255, 255, 255)
+miniCircle.Visible = false
+miniCircle.Active = true
+miniCircle.Draggable = true
+miniCircle.Parent = screenGui
+
+-- Make circle round
+local circleCorner = Instance.new("UICorner")
+circleCorner.CornerRadius = UDim.new(1, 0)
+circleCorner.Parent = miniCircle
+
+-- States
+local bossUIVisible = false
+local marketUIVisible = false
+local teleportUIVisible = false
+local isMinimized = false
+
+-- Close function
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+-- Minimize function
+minimizeBtn.MouseButton1Click:Connect(function()
+    isMinimized = true
+    mainFrame.Visible = false
+    miniCircle.Visible = true
+end)
+
+-- Restore function
+miniCircle.MouseButton1Click:Connect(function()
+    isMinimized = false
+    mainFrame.Visible = true
+    miniCircle.Visible = false
+end)
+
+-- Boss Spawn UI Toggle
+bossToggleBtn.MouseButton1Click:Connect(function()
+    bossUIVisible = not bossUIVisible
+    local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"]
+    button.Visible = bossUIVisible
+    button.Position = UDim2.new(0.800000012, 0, 0.100000001, 0)
+    button.Size = UDim2.new(0.100000001, 25, 0.100000001, 30)
+    
+    if bossUIVisible then
+        bossToggleBtn.Text = "Boss Spawn UI: ON"
+        bossToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+    else
+        bossToggleBtn.Text = "Boss Spawn UI: OFF"
+        bossToggleBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 220)
+    end
+end)
+
+-- Night Market UI Toggle
+marketToggleBtn.MouseButton1Click:Connect(function()
+    marketUIVisible = not marketUIVisible
+    local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Night Market"]
+    button.Visible = marketUIVisible
+    button.Position = UDim2.new(0.800000012, 0, 0.100000001, 0)
+    button.Size = UDim2.new(0.100000001, 25, 0.100000001, 30)
+    
+    if marketUIVisible then
+        marketToggleBtn.Text = "Night Market UI: ON"
+        marketToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+    else
+        marketToggleBtn.Text = "Night Market UI: OFF"
+        marketToggleBtn.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
+    end
+end)
+
+-- Teleporter UI Toggle
+teleportToggleBtn.MouseButton1Click:Connect(function()
+    teleportUIVisible = not teleportUIVisible
+    local button = game:GetService("Players").LocalPlayer.PlayerGui.Button.Teleport
+    button.Visible = teleportUIVisible
+    button.Position = UDim2.new(0.800000012, 0, 0.100000001, 0)
+    button.Size = UDim2.new(0.100000001, 25, 0.100000001, 30)
+    
+    if teleportUIVisible then
+        teleportToggleBtn.Text = "Teleporter UI: ON"
+        teleportToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+    else
+        teleportToggleBtn.Text = "Teleporter UI: OFF"
+        teleportToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 120, 60)
+    end
+end)
+
+print("UI loaded successfully!")
