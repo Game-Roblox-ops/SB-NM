@@ -6,8 +6,8 @@ screenGui.Parent = game:GetService("CoreGui")
 
 -- Main Frame
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 250, 0, 240)
-mainFrame.Position = UDim2.new(0.5, -125, 0.5, -120)
+mainFrame.Size = UDim2.new(0, 250, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -125, 0.5, -150)
 mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 mainFrame.BorderSizePixel = 2
 mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
@@ -86,6 +86,18 @@ teleportToggleBtn.Font = Enum.Font.GothamSemibold
 teleportToggleBtn.BorderSizePixel = 0
 teleportToggleBtn.Parent = mainFrame
 
+-- Auto Summon Boss Toggle Button
+local autoSummonBtn = Instance.new("TextButton")
+autoSummonBtn.Size = UDim2.new(0, 220, 0, 45)
+autoSummonBtn.Position = UDim2.new(0, 15, 0, 235)
+autoSummonBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 140)
+autoSummonBtn.Text = "Auto Summon Boss: OFF"
+autoSummonBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+autoSummonBtn.TextSize = 16
+autoSummonBtn.Font = Enum.Font.GothamSemibold
+autoSummonBtn.BorderSizePixel = 0
+autoSummonBtn.Parent = mainFrame
+
 -- Minimized Circle Button
 local miniCircle = Instance.new("TextButton")
 miniCircle.Size = UDim2.new(0, 60, 0, 60)
@@ -111,10 +123,12 @@ circleCorner.Parent = miniCircle
 local bossUIVisible = false
 local marketUIVisible = false
 local teleportUIVisible = false
+local autoSummonEnabled = false
 local isMinimized = false
 
 -- Close function
 closeBtn.MouseButton1Click:Connect(function()
+    autoSummonEnabled = false
     screenGui:Destroy()
 end)
 
@@ -137,7 +151,7 @@ bossToggleBtn.MouseButton1Click:Connect(function()
     bossUIVisible = not bossUIVisible
     local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"]
     button.Visible = bossUIVisible
-    button.Position = UDim2.new(0.800000012, 0, 0.100000001, 0)
+    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
     button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
     
     if bossUIVisible then
@@ -154,7 +168,7 @@ marketToggleBtn.MouseButton1Click:Connect(function()
     marketUIVisible = not marketUIVisible
     local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Night Market"]
     button.Visible = marketUIVisible
-    button.Position = UDim2.new(0.800000012, 0, 0.100000001, 0)
+    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
     button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
     
     if marketUIVisible then
@@ -171,7 +185,7 @@ teleportToggleBtn.MouseButton1Click:Connect(function()
     teleportUIVisible = not teleportUIVisible
     local button = game:GetService("Players").LocalPlayer.PlayerGui.Button.Teleport
     button.Visible = teleportUIVisible
-    button.Position = UDim2.new(0.800000012, 0, 0.100000001, 0)
+    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
     button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
     
     if teleportUIVisible then
@@ -180,6 +194,48 @@ teleportToggleBtn.MouseButton1Click:Connect(function()
     else
         teleportToggleBtn.Text = "Teleporter UI: OFF"
         teleportToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 120, 60)
+    end
+end)
+
+-- Auto Summon Boss Function
+local function autoSummonBoss()
+    local success, err = pcall(function()
+        local spawnButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Spawn.Button
+        
+        -- Make sure the button is visible
+        spawnButton.Visible = true
+        
+        -- Click the button
+        for _, connection in pairs(getconnections(spawnButton.MouseButton1Click)) do
+            connection:Fire()
+        end
+        
+        print("Boss summoned!")
+    end)
+    
+    if not success then
+        warn("Failed to summon boss:", err)
+    end
+end
+
+-- Auto Summon Toggle
+autoSummonBtn.MouseButton1Click:Connect(function()
+    autoSummonEnabled = not autoSummonEnabled
+    
+    if autoSummonEnabled then
+        autoSummonBtn.Text = "Auto Summon Boss: ON"
+        autoSummonBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+        
+        -- Auto summon loop
+        spawn(function()
+            while autoSummonEnabled do
+                autoSummonBoss()
+                wait(5) -- Wait 5 seconds between summons (adjust as needed)
+            end
+        end)
+    else
+        autoSummonBtn.Text = "Auto Summon Boss: OFF"
+        autoSummonBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 140)
     end
 end)
 
