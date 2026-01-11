@@ -137,6 +137,8 @@ bossToggleBtn.MouseButton1Click:Connect(function()
     bossUIVisible = not bossUIVisible
     local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"]
     button.Visible = bossUIVisible
+    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
+    button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
     
     if bossUIVisible then
         bossToggleBtn.Text = "Boss Spawn UI: ON"
@@ -152,6 +154,8 @@ marketToggleBtn.MouseButton1Click:Connect(function()
     marketUIVisible = not marketUIVisible
     local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Night Market"]
     button.Visible = marketUIVisible
+    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
+    button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
     
     if marketUIVisible then
         marketToggleBtn.Text = "Night Market UI: ON"
@@ -167,6 +171,8 @@ teleportToggleBtn.MouseButton1Click:Connect(function()
     teleportUIVisible = not teleportUIVisible
     local button = game:GetService("Players").LocalPlayer.PlayerGui.Button.Teleport
     button.Visible = teleportUIVisible
+    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
+    button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
     
     if teleportUIVisible then
         teleportToggleBtn.Text = "Teleporter UI: ON"
