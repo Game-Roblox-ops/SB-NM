@@ -200,12 +200,12 @@ end)
 -- Auto Summon Boss Function
 local function autoSummonBoss()
     local success, err = pcall(function()
-        local spawnButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Spawn.Button
+        local spawnButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Spawn
         
-        -- Make sure the button is visible
+        -- Make sure it's visible
         spawnButton.Visible = true
         
-        -- Click the button
+        -- Click the Spawn button/frame
         for _, connection in pairs(getconnections(spawnButton.MouseButton1Click)) do
             connection:Fire()
         end
