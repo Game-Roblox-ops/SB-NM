@@ -86,12 +86,12 @@ teleportToggleBtn.Font = Enum.Font.GothamSemibold
 teleportToggleBtn.BorderSizePixel = 0
 teleportToggleBtn.Parent = mainFrame
 
--- Auto Summon Boss Toggle Button
+-- Auto Summon Akaza Toggle Button
 local autoSummonBtn = Instance.new("TextButton")
 autoSummonBtn.Size = UDim2.new(0, 220, 0, 45)
 autoSummonBtn.Position = UDim2.new(0, 15, 0, 235)
 autoSummonBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 140)
-autoSummonBtn.Text = "Auto Summon Boss: OFF"
+autoSummonBtn.Text = "Auto Summon Akaza: OFF"
 autoSummonBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 autoSummonBtn.TextSize = 16
 autoSummonBtn.Font = Enum.Font.GothamSemibold
@@ -197,24 +197,30 @@ teleportToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Auto Summon Boss Function
-local function autoSummonBoss()
+-- Auto Summon Akaza Function
+local function autoSummonAkaza()
     local success, err = pcall(function()
-        local spawnButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Spawn
+        -- Click Akaza to select it
+        local akazaButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Frame.Akaza
+        akazaButton.Visible = true
         
-        -- Make sure it's visible
+        for _, connection in pairs(getconnections(akazaButton.MouseButton1Click)) do
+            connection:Fire()
+        end
+        
+        -- Click Spawn button immediately
+        local spawnButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Spawn
         spawnButton.Visible = true
         
-        -- Click the Spawn button/frame
         for _, connection in pairs(getconnections(spawnButton.MouseButton1Click)) do
             connection:Fire()
         end
         
-        print("Boss summoned!")
+        print("Spawned Akaza!")
     end)
     
     if not success then
-        warn("Failed to summon boss:", err)
+        warn("Failed to summon Akaza:", err)
     end
 end
 
@@ -223,18 +229,18 @@ autoSummonBtn.MouseButton1Click:Connect(function()
     autoSummonEnabled = not autoSummonEnabled
     
     if autoSummonEnabled then
-        autoSummonBtn.Text = "Auto Summon Boss: ON"
+        autoSummonBtn.Text = "Auto Summon Akaza: ON"
         autoSummonBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
         
-        -- Auto summon loop
+        -- Auto summon loop with no delay
         spawn(function()
             while autoSummonEnabled do
-                autoSummonBoss()
-                wait(5) -- Wait 5 seconds between summons (adjust as needed)
+                autoSummonAkaza()
+                wait() -- Minimal wait to prevent crashing
             end
         end)
     else
-        autoSummonBtn.Text = "Auto Summon Boss: OFF"
+        autoSummonBtn.Text = "Auto Summon Akaza: OFF"
         autoSummonBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 140)
     end
 end)
