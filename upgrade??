@@ -86,17 +86,17 @@ teleportToggleBtn.Font = Enum.Font.GothamSemibold
 teleportToggleBtn.BorderSizePixel = 0
 teleportToggleBtn.Parent = mainFrame
 
--- Auto Summon Akaza Toggle Button
-local autoSummonBtn = Instance.new("TextButton")
-autoSummonBtn.Size = UDim2.new(0, 220, 0, 45)
-autoSummonBtn.Position = UDim2.new(0, 15, 0, 235)
-autoSummonBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 140)
-autoSummonBtn.Text = "Auto Summon Akaza: OFF"
-autoSummonBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-autoSummonBtn.TextSize = 16
-autoSummonBtn.Font = Enum.Font.GothamSemibold
-autoSummonBtn.BorderSizePixel = 0
-autoSummonBtn.Parent = mainFrame
+-- Shop Toggle Button
+local shopToggleBtn = Instance.new("TextButton")
+shopToggleBtn.Size = UDim2.new(0, 220, 0, 45)
+shopToggleBtn.Position = UDim2.new(0, 15, 0, 235)
+shopToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 180)
+shopToggleBtn.Text = "Shop UI: OFF"
+shopToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+shopToggleBtn.TextSize = 16
+shopToggleBtn.Font = Enum.Font.GothamSemibold
+shopToggleBtn.BorderSizePixel = 0
+shopToggleBtn.Parent = mainFrame
 
 -- Minimized Circle Button
 local miniCircle = Instance.new("TextButton")
@@ -123,12 +123,11 @@ circleCorner.Parent = miniCircle
 local bossUIVisible = false
 local marketUIVisible = false
 local teleportUIVisible = false
-local autoSummonEnabled = false
+local shopUIVisible = false
 local isMinimized = false
 
 -- Close function
 closeBtn.MouseButton1Click:Connect(function()
-    autoSummonEnabled = false
     screenGui:Destroy()
 end)
 
@@ -163,13 +162,13 @@ bossToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Night Market UI Toggle
+-- Night Market UI Toggle (UPDATED POSITION AND SIZE)
 marketToggleBtn.MouseButton1Click:Connect(function()
     marketUIVisible = not marketUIVisible
     local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Night Market"]
     button.Visible = marketUIVisible
-    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
-    button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
+    button.Position = UDim2.new(0.400000006, 1, 0, 0)
+    button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
     
     if marketUIVisible then
         marketToggleBtn.Text = "Night Market UI: ON"
@@ -197,51 +196,20 @@ teleportToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Auto Summon Akaza Function
-local function autoSummonAkaza()
-    local success, err = pcall(function()
-        -- Click Akaza to select it
-        local akazaButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Frame.Akaza
-        akazaButton.Visible = true
-        
-        for _, connection in pairs(getconnections(akazaButton.MouseButton1Click)) do
-            connection:Fire()
-        end
-        
-        -- Click Spawn button immediately
-        local spawnButton = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"].Spawn
-        spawnButton.Visible = true
-        
-        for _, connection in pairs(getconnections(spawnButton.MouseButton1Click)) do
-            connection:Fire()
-        end
-        
-        print("Spawned Akaza!")
-    end)
+-- Shop UI Toggle (NEW)
+shopToggleBtn.MouseButton1Click:Connect(function()
+    shopUIVisible = not shopUIVisible
+    local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Shop Item"]
+    button.Visible = shopUIVisible
+    button.Position = UDim2.new(0.600000024, 1, 0.0199999996, 0)
+    button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
     
-    if not success then
-        warn("Failed to summon Akaza:", err)
-    end
-end
-
--- Auto Summon Toggle
-autoSummonBtn.MouseButton1Click:Connect(function()
-    autoSummonEnabled = not autoSummonEnabled
-    
-    if autoSummonEnabled then
-        autoSummonBtn.Text = "Auto Summon Akaza: ON"
-        autoSummonBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
-        
-        -- Auto summon loop with no delay
-        spawn(function()
-            while autoSummonEnabled do
-                autoSummonAkaza()
-                wait() -- Minimal wait to prevent crashing
-            end
-        end)
+    if shopUIVisible then
+        shopToggleBtn.Text = "Shop UI: ON"
+        shopToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
     else
-        autoSummonBtn.Text = "Auto Summon Akaza: OFF"
-        autoSummonBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 140)
+        shopToggleBtn.Text = "Shop UI: OFF"
+        shopToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 180)
     end
 end)
 
