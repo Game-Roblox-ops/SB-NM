@@ -1,185 +1,176 @@
--- Create ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "CustomUI"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = game:GetService("CoreGui")
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Main Frame
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 250, 0, 240)
-mainFrame.Position = UDim2.new(0.5, -125, 0.5, -120)
-mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-mainFrame.BorderSizePixel = 2
-mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
-mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Parent = screenGui
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player.PlayerGui
 
--- Title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 40)
-title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-title.BorderSizePixel = 0
-title.Text = "Menu"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 18
-title.Font = Enum.Font.GothamBold
-title.Parent = mainFrame
+local buttons = {"Boss Spawn", "Night Market", "Teleporter", "Shop", "Chest Exchange"}
+for _, name in ipairs(buttons) do
+    local ok, e = pcall(function()
+        playerGui.Button[name].Visible = false
+    end)
+    if not ok then warn(name .. " not found: " .. e) end
+end
 
--- Minimize Button
-local minimizeBtn = Instance.new("TextButton")
-minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-minimizeBtn.Position = UDim2.new(1, -70, 0, 5)
-minimizeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-minimizeBtn.Text = "-"
-minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizeBtn.TextSize = 20
-minimizeBtn.Font = Enum.Font.GothamBold
-minimizeBtn.BorderSizePixel = 0
-minimizeBtn.Parent = title
+local Window = Rayfield:CreateWindow({
+    Name = "Menu",
+    LoadingTitle = "Loading...",
+    LoadingSubtitle = "Please wait",
+    ConfigurationSaving = {
+        Enabled = false,
+    },
+    KeySystem = false,
+})
 
--- Close Button
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -35, 0, 5)
-closeBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-closeBtn.Text = "X"
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.TextSize = 16
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.BorderSizePixel = 0
-closeBtn.Parent = title
+local Tab = Window:CreateTab("Main", 4483362458)
+local CombatTab = Window:CreateTab("Combat", 4483362458)
 
--- Boss Spawn Toggle Button
-local bossToggleBtn = Instance.new("TextButton")
-bossToggleBtn.Size = UDim2.new(0, 220, 0, 45)
-bossToggleBtn.Position = UDim2.new(0, 15, 0, 55)
-bossToggleBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 220)
-bossToggleBtn.Text = "Boss Spawn UI: OFF"
-bossToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-bossToggleBtn.TextSize = 16
-bossToggleBtn.Font = Enum.Font.GothamSemibold
-bossToggleBtn.BorderSizePixel = 0
-bossToggleBtn.Parent = mainFrame
+Tab:CreateToggle({
+    Name = "Boss Spawn UI",
+    CurrentValue = false,
+    Flag = "BossSpawnToggle",
+    Callback = function(value)
+        local ok, e = pcall(function()
+            playerGui.Button["Boss Spawn"].Visible = value
+        end)
+        if not ok then warn("Boss Spawn not found: " .. e) end
+    end,
+})
 
--- Night Market Toggle Button
-local marketToggleBtn = Instance.new("TextButton")
-marketToggleBtn.Size = UDim2.new(0, 220, 0, 45)
-marketToggleBtn.Position = UDim2.new(0, 15, 0, 115)
-marketToggleBtn.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
-marketToggleBtn.Text = "Night Market UI: OFF"
-marketToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-marketToggleBtn.TextSize = 16
-marketToggleBtn.Font = Enum.Font.GothamSemibold
-marketToggleBtn.BorderSizePixel = 0
-marketToggleBtn.Parent = mainFrame
+Tab:CreateToggle({
+    Name = "Night Market UI",
+    CurrentValue = false,
+    Flag = "NightMarketToggle",
+    Callback = function(value)
+        local ok, e = pcall(function()
+            playerGui.Button["Night Market"].Visible = value
+        end)
+        if not ok then warn("Night Market not found: " .. e) end
+    end,
+})
 
--- Teleporter Toggle Button
-local teleportToggleBtn = Instance.new("TextButton")
-teleportToggleBtn.Size = UDim2.new(0, 220, 0, 45)
-teleportToggleBtn.Position = UDim2.new(0, 15, 0, 175)
-teleportToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 120, 60)
-teleportToggleBtn.Text = "Teleporter UI: OFF"
-teleportToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-teleportToggleBtn.TextSize = 16
-teleportToggleBtn.Font = Enum.Font.GothamSemibold
-teleportToggleBtn.BorderSizePixel = 0
-teleportToggleBtn.Parent = mainFrame
+Tab:CreateToggle({
+    Name = "Teleporter UI",
+    CurrentValue = false,
+    Flag = "TeleporterToggle",
+    Callback = function(value)
+        local ok, e = pcall(function()
+            playerGui.Button["Teleporter"].Visible = value
+        end)
+        if not ok then warn("Teleporter not found: " .. e) end
+    end,
+})
 
--- Minimized Circle Button
-local miniCircle = Instance.new("TextButton")
-miniCircle.Size = UDim2.new(0, 60, 0, 60)
-miniCircle.Position = UDim2.new(0, 20, 0, 20)
-miniCircle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-miniCircle.Text = "+"
-miniCircle.TextColor3 = Color3.fromRGB(255, 255, 255)
-miniCircle.TextSize = 30
-miniCircle.Font = Enum.Font.GothamBold
-miniCircle.BorderSizePixel = 2
-miniCircle.BorderColor3 = Color3.fromRGB(255, 255, 255)
-miniCircle.Visible = false
-miniCircle.Active = true
-miniCircle.Draggable = true
-miniCircle.Parent = screenGui
+Tab:CreateToggle({
+    Name = "Shop UI",
+    CurrentValue = false,
+    Flag = "ShopToggle",
+    Callback = function(value)
+        local ok, e = pcall(function()
+            playerGui.Button["Shop"].Visible = value
+        end)
+        if not ok then warn("Shop not found: " .. e) end
+    end,
+})
 
--- Make circle round
-local circleCorner = Instance.new("UICorner")
-circleCorner.CornerRadius = UDim.new(1, 0)
-circleCorner.Parent = miniCircle
+Tab:CreateToggle({
+    Name = "Chest Exchange UI",
+    CurrentValue = false,
+    Flag = "ChestExchangeToggle",
+    Callback = function(value)
+        local ok, e = pcall(function()
+            playerGui.Button["Chest Exchange"].Visible = value
+        end)
+        if not ok then warn("Chest Exchange not found: " .. e) end
+    end,
+})
 
--- States
-local bossUIVisible = false
-local marketUIVisible = false
-local teleportUIVisible = false
-local isMinimized = false
+local hakiEnabled = false
+local observationEnabled = false
+local swordEnabled = false
 
--- Close function
-closeBtn.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
-end)
+CombatTab:CreateToggle({
+    Name = "Auto Haki",
+    CurrentValue = false,
+    Flag = "AutoHakiToggle",
+    Callback = function(value)
+        hakiEnabled = value
+    end,
+})
 
--- Minimize function
-minimizeBtn.MouseButton1Click:Connect(function()
-    isMinimized = true
-    mainFrame.Visible = false
-    miniCircle.Visible = true
-end)
+CombatTab:CreateToggle({
+    Name = "Auto Observation Haki",
+    CurrentValue = false,
+    Flag = "ObservationToggle",
+    Callback = function(value)
+        observationEnabled = value
+    end,
+})
 
--- Restore function
-miniCircle.MouseButton1Click:Connect(function()
-    isMinimized = false
-    mainFrame.Visible = true
-    miniCircle.Visible = false
-end)
+CombatTab:CreateToggle({
+    Name = "Auto Sword Skill",
+    CurrentValue = false,
+    Flag = "SwordToggle",
+    Callback = function(value)
+        swordEnabled = value
+    end,
+})
 
--- Boss Spawn UI Toggle
-bossToggleBtn.MouseButton1Click:Connect(function()
-    bossUIVisible = not bossUIVisible
-    local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Boss Spawn"]
-    button.Visible = bossUIVisible
-    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
-    button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
-    
-    if bossUIVisible then
-        bossToggleBtn.Text = "Boss Spawn UI: ON"
-        bossToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
-    else
-        bossToggleBtn.Text = "Boss Spawn UI: OFF"
-        bossToggleBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 220)
+task.spawn(function()
+    while task.wait() do
+        if hakiEnabled then
+            local ok, e = pcall(function()
+                local args = {"Server", "Misc", "Haki", 1}
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer(unpack(args))
+            end)
+            if not ok then warn("Auto Haki error: " .. e) end
+        end
     end
 end)
 
--- Night Market UI Toggle
-marketToggleBtn.MouseButton1Click:Connect(function()
-    marketUIVisible = not marketUIVisible
-    local button = game:GetService("Players").LocalPlayer.PlayerGui.Button["Night Market"]
-    button.Visible = marketUIVisible
-    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
-    button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
-    
-    if marketUIVisible then
-        marketToggleBtn.Text = "Night Market UI: ON"
-        marketToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
-    else
-        marketToggleBtn.Text = "Night Market UI: OFF"
-        marketToggleBtn.BackgroundColor3 = Color3.fromRGB(120, 60, 220)
+player.CharacterAdded:Connect(function()
+    if hakiEnabled then
+        task.wait(1)
+        local ok, e = pcall(function()
+            local args = {"Server", "Misc", "Haki", 1}
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer(unpack(args))
+        end)
+        if not ok then warn("Spawn Haki error: " .. e) end
     end
 end)
 
--- Teleporter UI Toggle
-teleportToggleBtn.MouseButton1Click:Connect(function()
-    teleportUIVisible = not teleportUIVisible
-    local button = game:GetService("Players").LocalPlayer.PlayerGui.Button.Teleport
-    button.Visible = teleportUIVisible
-    button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
-    button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
-    
-    if teleportUIVisible then
-        teleportToggleBtn.Text = "Teleporter UI: ON"
-        teleportToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
-    else
-        teleportToggleBtn.Text = "Teleporter UI: OFF"
-        teleportToggleBtn.BackgroundColor3 = Color3.fromRGB(220, 120, 60)
+task.spawn(function()
+    while task.wait() do
+        if observationEnabled then
+            local ok, e = pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                local args = {"Server", "Misc", "Observation", 1}
+                remote:FireServer(unpack(args))
+                remote:FireServer(unpack(args))
+                remote:FireServer(unpack(args))
+                remote:FireServer(unpack(args))
+            end)
+            if not ok then warn("Observation Haki error: " .. e) end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if swordEnabled then
+            local ok, e = pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "Skill1", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill2", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill3", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill1", "Demon Lord's Dual Dagger")
+                remote:FireServer("Server", "Sword", "Skill2", "Demon Lord's Dual Dagger")
+                remote:FireServer("Server", "Sword", "Skill3", "Demon Lord's Dual Dagger")
+                remote:FireServer("Server", "Sword", "Skill4", "Demon Lord's Dual Dagger")
+            end)
+            if not ok then warn("Sword Skill error: " .. e) end
+        end
     end
 end)
 
