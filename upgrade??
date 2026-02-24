@@ -299,6 +299,7 @@ local observationEnabled = false
 local swordEnabled = false
 local hakariEnabled = false
 local dragonSlayerEnabled = false
+local autoM1Enabled = false
 
 makeToggle(combatContainer, "Auto Haki", false, function(value)
     hakiEnabled = value
@@ -318,6 +319,10 @@ end)
 
 makeToggle(combatContainer, "Auto Dragon Slayer Skill", false, function(value)
     dragonSlayerEnabled = value
+end)
+
+makeToggle(combatContainer, "Auto M1", false, function(value)
+    autoM1Enabled = value
 end)
 
 combatList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -436,6 +441,17 @@ task.spawn(function()
                 remote:FireServer("Server", "Sword", "Skill3", "Dragon Slayer")
                 remote:FireServer("Server", "Sword", "Skill4", "Dragon Slayer")
                 remote:FireServer("Server", "Sword", "Skill5", "Dragon Slayer")
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if autoM1Enabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "M1s", "Demon Lord's Dual Dagger", 1)
             end)
         end
     end
