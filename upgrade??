@@ -1,3 +1,4 @@
+
 -- Anti AFK
 local Players = game:GetService("Players")
 local VirtualUser = game:GetService("VirtualUser")
@@ -86,8 +87,6 @@ local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 10)
 mainCorner.Parent = mainFrame
 
--- Drag support for mobile
-local UserInputService = game:GetService("UserInputService")
 local dragging = false
 local dragStart, startPos
 
@@ -246,8 +245,8 @@ makeToggle(mainContainer, "Boss Spawn", false, function(value)
     pcall(function()
         local button = playerGui.Button["Boss Spawn"]
         button.Visible = value
-        button.Position = UDim2.new(0.400000006, 1, 0, 0)
-        button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
+        button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
+        button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
     end)
 end)
 
@@ -298,6 +297,8 @@ updateSize(mainContainer, mainList)
 local hakiEnabled = false
 local observationEnabled = false
 local swordEnabled = false
+local hakariEnabled = false
+local dragonSlayerEnabled = false
 
 makeToggle(combatContainer, "Auto Haki", false, function(value)
     hakiEnabled = value
@@ -309,6 +310,14 @@ end)
 
 makeToggle(combatContainer, "Auto Sword Skill", false, function(value)
     swordEnabled = value
+end)
+
+makeToggle(combatContainer, "Auto Hakari Skill", false, function(value)
+    hakariEnabled = value
+end)
+
+makeToggle(combatContainer, "Auto Dragon Slayer Skill", false, function(value)
+    dragonSlayerEnabled = value
 end)
 
 combatList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -348,8 +357,9 @@ titleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Auto Haki loop
 task.spawn(function()
-    while task.wait(20) do
+    while task.wait() do
         if hakiEnabled then
             pcall(function()
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer("Server", "Misc", "Haki", 1)
@@ -367,8 +377,9 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
+-- Auto Observation loop
 task.spawn(function()
-    while task.wait(3) do
+    while task.wait() do
         if observationEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
@@ -381,6 +392,7 @@ task.spawn(function()
     end
 end)
 
+-- Auto Sword Skill loop
 task.spawn(function()
     while task.wait() do
         if swordEnabled then
@@ -394,6 +406,36 @@ task.spawn(function()
                 remote:FireServer("Server", "Sword", "Skill2", "Demon Lord's Dual Dagger")
                 remote:FireServer("Server", "Sword", "Skill3", "Demon Lord's Dual Dagger")
                 remote:FireServer("Server", "Sword", "Skill4", "Demon Lord's Dual Dagger")
+            end)
+        end
+    end
+end)
+
+-- Auto Hakari Skill loop (Skills 1, 2, 3)
+task.spawn(function()
+    while task.wait() do
+        if hakariEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Combat", "Skill1", "Hakari")
+                remote:FireServer("Server", "Combat", "Skill2", "Hakari")
+                remote:FireServer("Server", "Combat", "Skill3", "Hakari")
+            end)
+        end
+    end
+end)
+
+-- Auto Dragon Slayer Skill loop (Skills 1-5)
+task.spawn(function()
+    while task.wait() do
+        if dragonSlayerEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "Skill1", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill2", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill3", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill4", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill5", "Dragon Slayer")
             end)
         end
     end
