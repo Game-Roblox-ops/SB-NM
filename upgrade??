@@ -245,8 +245,8 @@ makeToggle(mainContainer, "Boss Spawn", false, function(value)
     pcall(function()
         local button = playerGui.Button["Boss Spawn"]
         button.Visible = value
-        button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
-        button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
+        button.Position = UDim2.new(0.600000024, 1, 0.0199999996, 0)
+        button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
     end)
 end)
 
@@ -359,7 +359,7 @@ end)
 
 -- Auto Haki loop
 task.spawn(function()
-    while task.wait() do
+    while task.wait(20) do
         if hakiEnabled then
             pcall(function()
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer("Server", "Misc", "Haki", 1)
@@ -379,7 +379,7 @@ end)
 
 -- Auto Observation loop
 task.spawn(function()
-    while task.wait() do
+    while task.wait(5) do
         if observationEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
