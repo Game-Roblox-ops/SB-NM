@@ -364,7 +364,7 @@ end)
 
 -- Auto Haki loop
 task.spawn(function()
-    while task.wait(20) do
+    while task.wait(5) do
         if hakiEnabled then
             pcall(function()
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer("Server", "Misc", "Haki", 1)
@@ -384,7 +384,7 @@ end)
 
 -- Auto Observation loop
 task.spawn(function()
-    while task.wait(5) do
+    while task.wait(2) do
         if observationEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
