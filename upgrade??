@@ -533,7 +533,9 @@ player.Idled:Connect(function()
 end)
 
 
-if game.PlaceId ~= 96105075537655 then -- replace 0 with your PlaceId
+local allowedPlaces = {96105075537655, } -- add as many as you need
+
+if not table.find(allowedPlaces, game.PlaceId) then
     error("This script only works in the correct game!")
 end
 
