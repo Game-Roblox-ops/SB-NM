@@ -2,75 +2,6 @@ if game.PlaceId ~= 84988808589910 then
     error("This script only works in the correct game!")
 end
 
--- Anti AFK
-local Players = game:GetService("Players")
-local VirtualUser = game:GetService("VirtualUser")
-local player = Players.LocalPlayer
-local playerGui = player.PlayerGui
-
-local afkGui = Instance.new("ScreenGui")
-afkGui.Name = "AntiAFK"
-afkGui.ResetOnSpawn = false
-afkGui.Parent = playerGui
-
-local afkFrame = Instance.new("Frame")
-afkFrame.Size = UDim2.new(0, 370, 0, 160)
-afkFrame.Position = UDim2.new(0.7, 0, 0.1, 0)
-afkFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-afkFrame.BorderSizePixel = 0
-afkFrame.Active = true
-afkFrame.Draggable = true
-afkFrame.Parent = afkGui
-
-local afkCorner = Instance.new("UICorner")
-afkCorner.CornerRadius = UDim.new(0, 10)
-afkCorner.Parent = afkFrame
-
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(1, 0, 0, 50)
-titleLabel.Position = UDim2.new(0, 0, 0, 0)
-titleLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-titleLabel.BorderSizePixel = 0
-titleLabel.Text = "Anti AFK"
-titleLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
-titleLabel.TextSize = 22
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.Parent = afkFrame
-
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 10)
-titleCorner.Parent = titleLabel
-
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(1, 0, 0, 60)
-statusLabel.Position = UDim2.new(0, 0, 0, 55)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Status: Active"
-statusLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
-statusLabel.TextSize = 20
-statusLabel.Font = Enum.Font.GothamSemibold
-statusLabel.Parent = afkFrame
-
-local creditLabel = Instance.new("TextLabel")
-creditLabel.Size = UDim2.new(1, 0, 0, 30)
-creditLabel.Position = UDim2.new(0, 0, 1, -30)
-creditLabel.BackgroundTransparency = 1
-creditLabel.Text = "Anti AFK - Updated"
-creditLabel.TextColor3 = Color3.fromRGB(100, 100, 100)
-creditLabel.TextSize = 14
-creditLabel.Font = Enum.Font.Gotham
-creditLabel.Parent = afkFrame
-
-player.Idled:Connect(function()
-    VirtualUser:CaptureController()
-    VirtualUser:ClickButton2(Vector2.new())
-    statusLabel.Text = "Roblox tried to kick you!\nBlocked it successfully!"
-    statusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
-    task.wait(3)
-    statusLabel.Text = "Status: Active"
-    statusLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
-end)
-
 -- Menu UI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "MobileUI"
@@ -533,7 +464,7 @@ player.Idled:Connect(function()
 end)
 
 
-local allowedPlaces = {96105075537655, } -- add as many as you need
+local allowedPlaces = {96105075537655, 8321616508}
 
 if not table.find(allowedPlaces, game.PlaceId) then
     error("This script only works in the correct game!")
