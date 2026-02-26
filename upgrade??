@@ -1,4 +1,3 @@
-
 local Players = game:GetService("Players")
 local VirtualUser = game:GetService("VirtualUser")
 local player = Players.LocalPlayer
@@ -11,7 +10,6 @@ if not isMainGame and not isRaid then
     error("This script does not work in this game!")
 end
 
--- Anti AFK
 local afkGui = Instance.new("ScreenGui")
 afkGui.Name = "AntiAFK"
 afkGui.ResetOnSpawn = false
@@ -75,7 +73,6 @@ player.Idled:Connect(function()
     statusLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
 end)
 
--- Menu UI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "MobileUI"
 screenGui.ResetOnSpawn = false
@@ -381,8 +378,10 @@ titleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Haki: 5s delay in main game, no cd in raid
+local hakiDelay = isMainGame and 5 or 0
 task.spawn(function()
-    while task.wait() do
+    while task.wait(hakiDelay) do
         if hakiEnabled then
             pcall(function()
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer("Server", "Misc", "Haki", 1)
@@ -400,8 +399,10 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
+-- Observation: 2s delay in main game, no cd in raid
+local obsDelay = isMainGame and 2 or 0
 task.spawn(function()
-    while task.wait() do
+    while task.wait(obsDelay) do
         if observationEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
