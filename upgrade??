@@ -533,7 +533,7 @@ player.Idled:Connect(function()
 end)
 
 
-if game.PlaceId ~= 0 then -- replace 0 with your PlaceId
+if game.PlaceId ~= 96105075537655 then -- replace 0 with your PlaceId
     error("This script only works in the correct game!")
 end
 
