@@ -463,11 +463,6 @@ end)
 print("UI loaded successfully!")
 
 
-if game.PlaceId ~= 84988808589910 then
-    error("This script only works in the correct game!")
-end
-
-
 -- Anti AFK
 local Players = game:GetService("Players")
 local VirtualUser = game:GetService("VirtualUser")
@@ -537,3 +532,245 @@ player.Idled:Connect(function()
     statusLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
 end)
 
+
+if game.PlaceId ~= 0 then -- replace 0 with your PlaceId
+    error("This script only works in the correct game!")
+end
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CombatUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game:GetService("CoreGui")
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 200, 0, 40)
+mainFrame.Position = UDim2.new(0.5, -100, 0, 10)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 10)
+mainCorner.Parent = mainFrame
+
+local dragging = false
+local dragStart, startPos
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+mainFrame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+local titleBtn = Instance.new("TextButton")
+titleBtn.Size = UDim2.new(1, 0, 0, 40)
+titleBtn.BackgroundTransparency = 1
+titleBtn.Text = "⚔ Combat  ▼"
+titleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleBtn.TextSize = 15
+titleBtn.Font = Enum.Font.GothamBold
+titleBtn.Parent = mainFrame
+
+local contentFrame = Instance.new("Frame")
+contentFrame.Size = UDim2.new(1, 0, 0, 0)
+contentFrame.Position = UDim2.new(0, 0, 0, 40)
+contentFrame.BackgroundTransparency = 1
+contentFrame.ClipsDescendants = true
+contentFrame.Parent = mainFrame
+
+local combatList = Instance.new("UIListLayout")
+combatList.Padding = UDim.new(0, 4)
+combatList.Parent = contentFrame
+
+local function makeToggle(labelText, startState, onToggle)
+    local row = Instance.new("Frame")
+    row.Size = UDim2.new(1, -8, 0, 32)
+    row.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    row.BorderSizePixel = 0
+    row.Parent = contentFrame
+
+    local rowCorner = Instance.new("UICorner")
+    rowCorner.CornerRadius = UDim.new(0, 6)
+    rowCorner.Parent = row
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(0.7, 0, 1, 0)
+    label.Position = UDim2.new(0, 8, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = labelText
+    label.TextColor3 = Color3.fromRGB(220, 220, 220)
+    label.TextSize = 12
+    label.Font = Enum.Font.Gotham
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = row
+
+    local togBtn = Instance.new("TextButton")
+    togBtn.Size = UDim2.new(0, 44, 0, 22)
+    togBtn.Position = UDim2.new(1, -52, 0.5, -11)
+    togBtn.BackgroundColor3 = startState and Color3.fromRGB(80, 200, 120) or Color3.fromRGB(80, 80, 80)
+    togBtn.Text = startState and "ON" or "OFF"
+    togBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    togBtn.TextSize = 11
+    togBtn.Font = Enum.Font.GothamBold
+    togBtn.BorderSizePixel = 0
+    togBtn.Parent = row
+
+    local togCorner = Instance.new("UICorner")
+    togCorner.CornerRadius = UDim.new(0, 11)
+    togCorner.Parent = togBtn
+
+    local state = startState
+    togBtn.MouseButton1Click:Connect(function()
+        state = not state
+        togBtn.Text = state and "ON" or "OFF"
+        togBtn.BackgroundColor3 = state and Color3.fromRGB(80, 200, 120) or Color3.fromRGB(80, 80, 80)
+        onToggle(state)
+    end)
+
+    return row
+end
+
+local hakiEnabled = false
+local observationEnabled = false
+local swordEnabled = false
+local hakariEnabled = false
+local dragonSlayerEnabled = false
+local autoM1Enabled = false
+
+makeToggle("Auto Haki", false, function(value) hakiEnabled = value end)
+makeToggle("Auto Observation Haki", false, function(value) observationEnabled = value end)
+makeToggle("Auto Sword Skill", false, function(value) swordEnabled = value end)
+makeToggle("Auto Hakari Skill", false, function(value) hakariEnabled = value end)
+makeToggle("Auto Dragon Slayer Skill", false, function(value) dragonSlayerEnabled = value end)
+makeToggle("Auto M1", false, function(value) autoM1Enabled = value end)
+
+local expanded = false
+titleBtn.MouseButton1Click:Connect(function()
+    expanded = not expanded
+    titleBtn.Text = expanded and "⚔ Combat  ▲" or "⚔ Combat  ▼"
+    if expanded then
+        local totalHeight = 40 + combatList.AbsoluteContentSize.Y + 12
+        mainFrame.Size = UDim2.new(0, 200, 0, totalHeight)
+        contentFrame.Size = UDim2.new(1, 0, 0, totalHeight - 40)
+    else
+        mainFrame.Size = UDim2.new(0, 200, 0, 40)
+        contentFrame.Size = UDim2.new(1, 0, 0, 0)
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if hakiEnabled then
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer("Server", "Misc", "Haki", 1)
+            end)
+        end
+    end
+end)
+
+player.CharacterAdded:Connect(function()
+    if hakiEnabled then
+        task.wait(1)
+        pcall(function()
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside"):FireServer("Server", "Misc", "Haki", 1)
+        end)
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if observationEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Misc", "Observation", 1)
+                remote:FireServer("Server", "Misc", "Observation", 1)
+                remote:FireServer("Server", "Misc", "Observation", 1)
+                remote:FireServer("Server", "Misc", "Observation", 1)
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if swordEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "Skill1", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill2", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill3", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill", "Inverted Spear of Heaven")
+                remote:FireServer("Server", "Sword", "Skill1", "Demon Lord's Dual Dagger")
+                remote:FireServer("Server", "Sword", "Skill2", "Demon Lord's Dual Dagger")
+                remote:FireServer("Server", "Sword", "Skill3", "Demon Lord's Dual Dagger")
+                remote:FireServer("Server", "Sword", "Skill4", "Demon Lord's Dual Dagger")
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if hakariEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Combat", "Skill1", "Hakari")
+                remote:FireServer("Server", "Combat", "Skill2", "Hakari")
+                remote:FireServer("Server", "Combat", "Skill3", "Hakari")
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if dragonSlayerEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "Skill1", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill2", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill3", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill4", "Dragon Slayer")
+                remote:FireServer("Server", "Sword", "Skill5", "Dragon Slayer")
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if autoM1Enabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "M1s", "Demon Lord's Dual Dagger", 1)
+            end)
+        end
+    end
+end)
+
+print("Combat UI loaded successfully!")
