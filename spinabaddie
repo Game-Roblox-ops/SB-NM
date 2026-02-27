@@ -1,0 +1,66 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local buyEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("buy")
+
+-- Settings
+local DELAY = 0.5 -- Delay between each purchase (seconds)
+local AMOUNT = 1 -- Amount to buy each time
+local LOOP = true -- Set to false to buy only once
+
+-- Dice List
+local diceList = {
+    "Abyssal Dice",
+    "Annihilation Dice",
+    "Disaster Dice",
+    "Eldritch Dice",
+    "Emperor Dice",
+    "Impossible Dice",
+    "Infinity Dice",
+    "Joker Dice",
+    "Kraken Dice",
+    "Void Dice",
+    "Yinyang Dice",
+}
+
+-- Potion List (optional, remove if not needed)
+local potionList = {
+    "No Consume Dice Potion 1",
+    "Money Potion 3",
+}
+
+local function buyAll()
+    -- Buy all dice
+    for _, diceName in ipairs(diceList) do
+        local success, err = pcall(function()
+            buyEvent:InvokeServer(diceName, AMOUNT, "dice")
+        end)
+        if success then
+            print("[AutoBuy] Bought: " .. diceName)
+        else
+            warn("[AutoBuy] Failed to buy: " .. diceName .. " | Error: " .. tostring(err))
+        end
+        task.wait(DELAY)
+    end
+
+    -- Buy all potions
+    for _, potionName in ipairs(potionList) do
+        local success, err = pcall(function()
+            buyEvent:InvokeServer(potionName, AMOUNT, "potion")
+        end)
+        if success then
+            print("[AutoBuy] Bought: " .. potionName)
+        else
+            warn("[AutoBuy] Failed to buy: " .. potionName .. " | Error: " .. tostring(err))
+        end
+        task.wait(DELAY)
+    end
+end
+
+-- Main Loop
+if LOOP then
+    while true do
+        buyAll()
+        task.wait(1) -- Wait before next loop
+    end
+else
+    buyAll()
+end
