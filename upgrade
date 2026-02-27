@@ -1,0 +1,44 @@
+-- Existing code 
+... 
+
+-- Code to be inserted 
+local BossNames = {"Boss1", "Boss2", "Boss3"}
+
+local UIFrame = Instance.new("Frame", game.CoreGui)
+UIFrame.Size = UDim2.new(0, 200, 0, 300)
+UIFrame.Position = UDim2.new(0.5, -100, 0.5, -150)
+
+local function createBossButton(bossName)
+    local button = Instance.new("TextButton", UIFrame)
+    button.Text = bossName
+    button.Size = UDim2.new(0, 180, 0, 50)
+    button.MouseButton1Click:Connect(function()
+        -- code to handle boss button click
+    end)
+end
+
+for _, boss in ipairs(BossNames) do
+    createBossButton(boss)
+end
+
+local toggleButton = Instance.new("TextButton", UIFrame)
+toggleButton.Text = "Toggle Auto Boss"
+toggleButton.Size = UDim2.new(0, 180, 0, 50)
+
+local autoGotoBoss = false
+
+toggleButton.MouseButton1Click:Connect(function()
+    autoGotoBoss = not autoGotoBoss
+    -- code to enable or disable auto goto boss loop
+end)
+
+while true do
+    if autoGotoBoss then
+        -- code to go to the current boss
+    end
+    wait(1)
+end
+
+-- The rest of the existing code 
+... 
+
