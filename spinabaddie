@@ -8,20 +8,23 @@ local LOOP = true -- Set to false to buy only once
 
 -- Dice List
 local diceList = {
-    "Abyssal Dice",
-    "Annihilation Dice",
-    "Disaster Dice",
-    "Eldritch Dice",
-    "Emperor Dice",
-    "Impossible Dice",
-    "Infinity Dice",
-    "Joker Dice",
-    "Kraken Dice",
-    "Void Dice",
+    "Uriel Dice",
+    "Matrix Dice",
     "Yinyang Dice",
+    "Chronos Dice",
+    "Limbo Dice",
+    "Impossible Dice",
+    "Disaster Dice",
+    "Annihilation Dice",
+    "Emperor Dice",
+    "Eldritch Dice",
+    "Galactic Dice",
+    "Seraphic Dice",
+    "Kraken Dice",
+    "Reality Dice",
 }
 
--- Potion List (optional, remove if not needed)
+-- Potion List
 local potionList = {
     "No Consume Dice Potion 1",
     "Money Potion 3",
@@ -59,7 +62,7 @@ end
 if LOOP then
     while true do
         buyAll()
-        task.wait(1) -- Wait before next loop
+        task.wait(1)
     end
 else
     buyAll()
