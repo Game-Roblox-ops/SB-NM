@@ -664,21 +664,45 @@ gotoToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Auto goto boss loop
+
+local bossOrder = {
+    "AizenBoss",
+    "SukunaBoss",
+    "YujiBoss",
+    "GojoBoss",
+    "JinwooBoss",
+    "MadokaBoss"
+}
+
+local function findBoss(name)
+    for _, v in pairs(workspace.NPCs:GetDescendants()) do
+        if v.Name == name and v:FindFirstChild("HumanoidRootPart") then
+            return v
+        end
+    end
+    return nil
+end
+
 task.spawn(function()
+    local currentIndex = 1
     while true do
         task.wait()
         if autoGotoEnabled then
-            pcall(function()
-                for _, v in pairs(workspace.NPCs:GetChildren()) do
-                    if v.Name == selectedBoss then
-                        local hrp = v:FindFirstChild("HumanoidRootPart")
-                        if hrp then
-                            player.Character.HumanoidRootPart.CFrame = hrp.CFrame * CFrame.new(0, 0, 5)
-                        end
-                    end
+            local bossName = bossOrder[currentIndex]
+            local boss = findBoss(bossName)
+            if boss then
+                -- Boss is alive, keep teleporting to it
+                pcall(function()
+                    player.Character.HumanoidRootPart.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5)
+                end)
+            else
+                -- Boss is dead or not spawned, move to next
+                currentIndex = currentIndex + 1
+                if currentIndex > #bossOrder then
+                    currentIndex = 1
                 end
-            end)
+                task.wait(1)
+            end
         end
     end
 end)
