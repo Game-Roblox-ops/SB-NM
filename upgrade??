@@ -765,3 +765,9 @@ end
 end
 
 print("UI loaded successfully!")
+
+--Spin a baddie
+
+if game.PlaceId == 79305036070450 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Game-Roblox-ops/SB-NM/refs/heads/main/spinabaddie"))()
+end
