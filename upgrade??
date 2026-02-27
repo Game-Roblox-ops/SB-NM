@@ -577,18 +577,25 @@ Button.MouseButton1Click:Connect(function()
     updateUI()
 end)
 
-    local function fireAllSkills()
-        AbilityRemote:FireServer(1)
-        task.wait(delay)
-        AbilityRemote:FireServer(2)
-        task.wait(delay)
-        FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.Z})
-        task.wait(delay)
-        FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.X})
-        task.wait(delay)
-        FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.C})
-        task.wait(delay)
-    end
+    
+local HitRemote = RS:WaitForChild("CombatSystem"):WaitForChild("Remotes"):WaitForChild("RequestHit")
+
+local function fireAllSkills()
+    AbilityRemote:FireServer(1)
+    task.wait(delay)
+    AbilityRemote:FireServer(2)
+    task.wait(delay)
+    AbilityRemote:FireServer(3)
+    task.wait(delay)
+    FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.Z})
+    task.wait(delay)
+    FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.X})
+    task.wait(delay)
+    FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.C})
+    task.wait(delay)
+    HitRemote:FireServer()
+    task.wait(delay)
+end
 
     task.spawn(function()
         while true do
