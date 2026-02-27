@@ -562,10 +562,20 @@ if isSailorPiece then
         end
     end
 
-    Button.MouseButton1Click:Connect(function()
-        autoEnabled = not autoEnabled
-        updateUI()
-    end)
+    
+Button.MouseButton1Click:Connect(function()
+    autoEnabled = not autoEnabled
+    if autoEnabled then
+        pcall(function()
+            local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:EquipTool(player.Backpack["Dark Blade"])
+                humanoid:EquipTool(player.Backpack.Quake)
+            end
+        end)
+    end
+    updateUI()
+end)
 
     local function fireAllSkills()
         AbilityRemote:FireServer(1)
