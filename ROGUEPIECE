@@ -237,6 +237,14 @@ if isMainGame then
         end)
     end)
 
+    makeToggle(mainContainer, "Boss Spawn 2", false, function(value)
+    pcall(function()
+        local button = playerGui.Button["Boss Spawn2"]
+        button.Visible = value
+        button.Position = UDim2.new(0.600000024, 1, 0.0199999996, 0)
+        button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
+    end)
+end)
     mainList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         updateSize(mainContainer, mainList)
     end)
