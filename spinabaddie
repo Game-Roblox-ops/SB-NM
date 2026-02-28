@@ -31,8 +31,9 @@ local diceList = {
 local potionList = {
     "No Consume Dice Potion 1",
     "Money Potion 3",
+    "Mutation Chance Potion 1",
+    "Luck Potion 3",
 }
-
 -- UI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "SpinUI"
