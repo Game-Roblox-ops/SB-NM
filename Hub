@@ -1,0 +1,17 @@
+local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
+local player = Players.LocalPlayer
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Game-Roblox-ops/SB-NM/refs/heads/main/antiafk"))()
+
+if game.PlaceId == 84988808589910 or game.PlaceId == 96105075537655 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Game-Roblox-ops/SB-NM/refs/heads/main/ROGUEPIECE"))()
+end
+
+if game.PlaceId == 77747658251236 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Game-Roblox-ops/SB-NM/refs/heads/main/SAILOR%20PIECE"))()
+end
+
+if game.PlaceId == 79305036070450 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Game-Roblox-ops/SB-NM/refs/heads/main/spinabaddie"))()
+end
