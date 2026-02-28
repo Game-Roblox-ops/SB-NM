@@ -1,0 +1,274 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player.PlayerGui
+
+if game.PlaceId ~= 77747658251236 then return end
+
+local RS = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+
+local AbilityRemote = RS:WaitForChild("AbilitySystem"):WaitForChild("Remotes"):WaitForChild("RequestAbility")
+local FruitRemote = RS:WaitForChild("RemoteEvents"):WaitForChild("FruitPowerRemote")
+local HitRemote = RS:WaitForChild("CombatSystem"):WaitForChild("Remotes"):WaitForChild("RequestHit")
+
+local delay = 0.1
+local loopDelay = 1
+local autoEnabled = false
+local autoGotoEnabled = false
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AutoSkillUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = playerGui
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 200, 0, 90)
+Frame.Position = UDim2.new(0, 20, 0.5, -45)
+Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = ScreenGui
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 12)
+Corner.Parent = Frame
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(60, 60, 80)
+Stroke.Thickness = 1.5
+Stroke.Parent = Frame
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Position = UDim2.new(0, 0, 0, 8)
+Title.BackgroundTransparency = 1
+Title.Text = "⚡ AUTO SKILL"
+Title.TextColor3 = Color3.fromRGB(220, 220, 255)
+Title.TextSize = 14
+Title.Font = Enum.Font.GothamBold
+Title.Parent = Frame
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(1, 0, 0, 20)
+StatusLabel.Position = UDim2.new(0, 0, 0, 36)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "Status: OFF"
+StatusLabel.TextColor3 = Color3.fromRGB(180, 80, 80)
+StatusLabel.TextSize = 12
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.Parent = Frame
+
+local Button = Instance.new("TextButton")
+Button.Size = UDim2.new(0, 140, 0, 28)
+Button.Position = UDim2.new(0.5, -70, 1, -38)
+Button.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+Button.Text = "ENABLE"
+Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button.TextSize = 13
+Button.Font = Enum.Font.GothamBold
+Button.BorderSizePixel = 0
+Button.Parent = Frame
+
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(0, 8)
+BtnCorner.Parent = Button
+
+-- Boss UI
+local bossNames = {"GojoBoss", "JinwooBoss", "MadokaBoss", "SukunaBoss", "YujiBoss", "AizenBoss"}
+local selectedBoss = bossNames[1]
+
+local bossFrame = Instance.new("Frame")
+bossFrame.Size = UDim2.new(0, 200, 0, 240)
+bossFrame.Position = UDim2.new(0, 20, 0.5, 60)
+bossFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+bossFrame.BorderSizePixel = 0
+bossFrame.Active = true
+bossFrame.Draggable = true
+bossFrame.Parent = ScreenGui
+
+local bossFrameCorner = Instance.new("UICorner")
+bossFrameCorner.CornerRadius = UDim.new(0, 12)
+bossFrameCorner.Parent = bossFrame
+
+local bossStroke = Instance.new("UIStroke")
+bossStroke.Color = Color3.fromRGB(60, 60, 80)
+bossStroke.Thickness = 1.5
+bossStroke.Parent = bossFrame
+
+local bossTitle = Instance.new("TextLabel")
+bossTitle.Size = UDim2.new(1, 0, 0, 30)
+bossTitle.Position = UDim2.new(0, 0, 0, 8)
+bossTitle.BackgroundTransparency = 1
+bossTitle.Text = "⚔ AUTO FARM"
+bossTitle.TextColor3 = Color3.fromRGB(220, 220, 255)
+bossTitle.TextSize = 14
+bossTitle.Font = Enum.Font.GothamBold
+bossTitle.Parent = bossFrame
+
+local selectedLabel = Instance.new("TextLabel")
+selectedLabel.Size = UDim2.new(1, 0, 0, 20)
+selectedLabel.Position = UDim2.new(0, 0, 0, 38)
+selectedLabel.BackgroundTransparency = 1
+selectedLabel.Text = "Boss: " .. selectedBoss
+selectedLabel.TextColor3 = Color3.fromRGB(180, 180, 255)
+selectedLabel.TextSize = 11
+selectedLabel.Font = Enum.Font.Gotham
+selectedLabel.Parent = bossFrame
+
+local bossListFrame = Instance.new("Frame")
+bossListFrame.Size = UDim2.new(1, -10, 0, 150)
+bossListFrame.Position = UDim2.new(0, 5, 0, 60)
+bossListFrame.BackgroundTransparency = 1
+bossListFrame.Parent = bossFrame
+
+local bossListLayout = Instance.new("UIListLayout")
+bossListLayout.Padding = UDim.new(0, 3)
+bossListLayout.Parent = bossListFrame
+
+for _, name in ipairs(bossNames) do
+    local bossBtn = Instance.new("TextButton")
+    bossBtn.Size = UDim2.new(1, 0, 0, 22)
+    bossBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+    bossBtn.Text = name
+    bossBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    bossBtn.TextSize = 11
+    bossBtn.Font = Enum.Font.Gotham
+    bossBtn.BorderSizePixel = 0
+    bossBtn.Parent = bossListFrame
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 6)
+    btnCorner.Parent = bossBtn
+
+    bossBtn.MouseButton1Click:Connect(function()
+        selectedBoss = name
+        selectedLabel.Text = "Boss: " .. selectedBoss
+        bossBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 220)
+        for _, b in ipairs(bossListFrame:GetChildren()) do
+            if b:IsA("TextButton") and b ~= bossBtn then
+                b.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+            end
+        end
+    end)
+end
+
+local gotoToggleBtn = Instance.new("TextButton")
+gotoToggleBtn.Size = UDim2.new(0, 140, 0, 24)
+gotoToggleBtn.Position = UDim2.new(0.5, -70, 1, -30)
+gotoToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+gotoToggleBtn.Text = "ENABLE"
+gotoToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+gotoToggleBtn.TextSize = 13
+gotoToggleBtn.Font = Enum.Font.GothamBold
+gotoToggleBtn.BorderSizePixel = 0
+gotoToggleBtn.Parent = bossFrame
+
+local gotoCorner = Instance.new("UICorner")
+gotoCorner.CornerRadius = UDim.new(0, 8)
+gotoCorner.Parent = gotoToggleBtn
+
+gotoToggleBtn.MouseButton1Click:Connect(function()
+    autoGotoEnabled = not autoGotoEnabled
+    if autoGotoEnabled then
+        gotoToggleBtn.Text = "DISABLE"
+        gotoToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+        bossStroke.Color = Color3.fromRGB(80, 220, 120)
+    else
+        gotoToggleBtn.Text = "ENABLE"
+        gotoToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+        bossStroke.Color = Color3.fromRGB(60, 60, 80)
+    end
+end)
+
+local function updateUI()
+    if autoEnabled then
+        StatusLabel.Text = "Status: ON"
+        StatusLabel.TextColor3 = Color3.fromRGB(80, 220, 120)
+        Button.Text = "DISABLE"
+        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 60, 60)}):Play()
+        TweenService:Create(Stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(80, 220, 120)}):Play()
+    else
+        StatusLabel.Text = "Status: OFF"
+        StatusLabel.TextColor3 = Color3.fromRGB(180, 80, 80)
+        Button.Text = "ENABLE"
+        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(80, 80, 200)}):Play()
+        TweenService:Create(Stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(60, 60, 80)}):Play()
+    end
+end
+
+Button.MouseButton1Click:Connect(function()
+    autoEnabled = not autoEnabled
+    if autoEnabled then
+        pcall(function()
+            local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:EquipTool(player.Backpack["Dark Blade"])
+                humanoid:EquipTool(player.Backpack.Quake)
+            end
+        end)
+    end
+    updateUI()
+end)
+
+local function fireAllSkills()
+    AbilityRemote:FireServer(1)
+    task.wait(delay)
+    AbilityRemote:FireServer(2)
+    task.wait(delay)
+    AbilityRemote:FireServer(3)
+    task.wait(delay)
+    AbilityRemote:FireServer(4)
+    task.wait(delay)
+    FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.Z})
+    task.wait(delay)
+    FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.X})
+    task.wait(delay)
+    FruitRemote:FireServer("UseAbility", {FruitPower = "Quake", KeyCode = Enum.KeyCode.C})
+    task.wait(delay)
+    HitRemote:FireServer()
+    task.wait(delay)
+end
+
+task.spawn(function()
+    while true do
+        if autoEnabled then
+            fireAllSkills()
+            task.wait(loopDelay)
+        else
+            task.wait(0.1)
+        end
+    end
+end)
+
+task.spawn(function()
+    while true do
+        task.wait()
+        if autoGotoEnabled then
+            pcall(function()
+                local character = player.Character
+                if not character then return end
+                local hrp = character:FindFirstChild("HumanoidRootPart")
+                if not hrp then return end
+                local closestNPC = nil
+                local closestDist = 30
+                for _, v in pairs(workspace.NPCs:GetDescendants()) do
+                    if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
+                        local npcHRP = v:FindFirstChild("HumanoidRootPart")
+                        local dist = (hrp.Position - npcHRP.Position).Magnitude
+                        if dist < closestDist then
+                            closestDist = dist
+                            closestNPC = v
+                        end
+                    end
+                end
+                if closestNPC then
+                    HitRemote:FireServer()
+                end
+            end)
+        end
+    end
+end)
+
+print("Sailor Piece UI loaded!")
