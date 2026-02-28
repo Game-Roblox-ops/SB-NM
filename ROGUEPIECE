@@ -333,7 +333,7 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
-local obsDelay = isMainGame and 2 or 0
+local obsDelay = isMainGame and 0 or 0
 task.spawn(function()
     while task.wait(obsDelay) do
         if observationEnabled then
