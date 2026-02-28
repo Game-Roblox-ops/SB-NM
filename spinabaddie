@@ -1,3 +1,5 @@
+if game.PlaceId ~= 79305036070450 then return end
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local buyEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("buy")
 
