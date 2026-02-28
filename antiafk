@@ -1,3 +1,8 @@
+local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
+local player = Players.LocalPlayer
+local playerGui = player.PlayerGui
+
 local afkGui = Instance.new("ScreenGui")
 afkGui.Name = "AntiAFK"
 afkGui.ResetOnSpawn = false
