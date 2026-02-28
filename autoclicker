@@ -1,0 +1,150 @@
+-- RS Auto Clicker - With Target & Speed Control
+-- Put in a LocalScript (StarterPlayerScripts)
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local player = Players.LocalPlayer
+
+-- ========== GUI ==========
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "RS_AutoClicker_GUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 260, 0, 170)
+frame.Position = UDim2.new(0.5, -130, 0.5, -85)
+frame.BackgroundColor3 = Color3.fromRGB(0, 170, 255) -- bright blue
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.ZIndex = 100
+frame.Parent = screenGui
+
+local corner = Instance.new("UICorner", frame)
+corner.CornerRadius = UDim.new(0, 12)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "By RS-AutoClicker"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBold
+title.ZIndex = 101
+title.Parent = frame
+
+-- Toggle Button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0.8, 0, 0, 36)
+toggleButton.Position = UDim2.new(0.1, 0, 0, 50)
+toggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Text = "Auto Click: OFF"
+toggleButton.TextScaled = true
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.BorderSizePixel = 0
+toggleButton.ZIndex = 101
+toggleButton.Parent = frame
+
+local btnCorner = Instance.new("UICorner", toggleButton)
+btnCorner.CornerRadius = UDim.new(0, 10)
+
+-- Speed Label
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Size = UDim2.new(0.4, 0, 0, 30)
+speedLabel.Position = UDim2.new(0.1, 0, 0, 95)
+speedLabel.BackgroundTransparency = 1
+speedLabel.Text = "CPS:"
+speedLabel.TextColor3 = Color3.fromRGB(255,255,255)
+speedLabel.TextScaled = true
+speedLabel.Font = Enum.Font.GothamBold
+speedLabel.ZIndex = 101
+speedLabel.Parent = frame
+
+-- Speed Box
+local speedBox = Instance.new("TextBox")
+speedBox.Size = UDim2.new(0.4, 0, 0, 30)
+speedBox.Position = UDim2.new(0.5, 0, 0, 95)
+speedBox.BackgroundColor3 = Color3.fromRGB(20,20,20)
+speedBox.TextColor3 = Color3.fromRGB(255,255,255)
+speedBox.Text = "20" -- default CPS
+speedBox.TextScaled = true
+speedBox.Font = Enum.Font.GothamBold
+speedBox.ClearTextOnFocus = false
+speedBox.ZIndex = 101
+speedBox.Parent = frame
+
+local boxCorner = Instance.new("UICorner", speedBox)
+boxCorner.CornerRadius = UDim.new(0, 8)
+
+-- ========== TARGET MOUSE ICON ==========
+local target = Instance.new("ImageButton")
+target.Size = UDim2.new(0, 40, 0, 40)
+target.Position = UDim2.new(0.5, -20, 0.5, -20)
+target.BackgroundTransparency = 1
+target.Image = "rbxassetid://7072718362" -- mouse/cursor style icon
+target.ZIndex = 200
+target.Parent = screenGui
+
+target.Active = true
+target.Draggable = true
+
+-- ========== AUTO CLICK LOGIC ==========
+local clicking = false
+local clickThread
+
+local function getCPS()
+	local n = tonumber(speedBox.Text)
+	if not n or n < 1 then
+		return 1
+	end
+	if n > 1000 then
+		return 1000 -- cap it so it doesn't freeze you
+	end
+	return n
+end
+
+local function startClicking()
+	if clickThread then return end
+	clickThread = task.spawn(function()
+		while clicking do
+			local cps = getCPS()
+			local delayTime = 1 / cps
+
+			-- Get target screen position
+			local pos = target.AbsolutePosition + (target.AbsoluteSize / 2)
+			local x = math.floor(pos.X)
+			local y = math.floor(pos.Y)
+
+			-- Send mouse click at that position
+			VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 0)
+			VirtualInputManager:SendMouseButtonEvent(x, y, 0, false, game, 0)
+
+			task.wait(delayTime)
+		end
+	end)
+end
+
+local function stopClicking()
+	clicking = false
+	clickThread = nil
+end
+
+toggleButton.MouseButton1Click:Connect(function()
+	clicking = not clicking
+	if clicking then
+		toggleButton.Text = "Auto Click: ON"
+		toggleButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+		startClicking()
+	else
+		toggleButton.Text = "Auto Click: OFF"
+		toggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		stopClicking()
+	end
+end)
