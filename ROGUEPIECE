@@ -193,8 +193,8 @@ if isMainGame then
         pcall(function()
             local button = playerGui.Button["Boss Spawn"]
             button.Visible = value
-            button.Position = UDim2.new(0.800000012, 1, 9.99999972e-10, 0)
-            button.Size = UDim2.new(0.200000003, 0, 0.300000012, 10)
+            button.Position = UDim2.new(0.400000006, 1, 0, 0)
+            button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
         end)
     end)
 
