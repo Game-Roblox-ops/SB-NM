@@ -1,0 +1,135 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+local auraEnabled = false
+local auraRadius = 13
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "KillAura"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 130)
+frame.Position = UDim2.new(0, 20, 0.5, 100)
+frame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = frame
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(60, 60, 80)
+stroke.Thickness = 1.5
+stroke.Parent = frame
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 8)
+title.BackgroundTransparency = 1
+title.Text = "⚔ KILL AURA"
+title.TextColor3 = Color3.fromRGB(220, 220, 255)
+title.TextSize = 14
+title.Font = Enum.Font.GothamBold
+title.Parent = frame
+
+-- Radius label
+local radiusLabel = Instance.new("TextLabel")
+radiusLabel.Size = UDim2.new(0.5, 0, 0, 22)
+radiusLabel.Position = UDim2.new(0, 10, 0, 44)
+radiusLabel.BackgroundTransparency = 1
+radiusLabel.Text = "Radius:"
+radiusLabel.TextColor3 = Color3.fromRGB(180, 180, 255)
+radiusLabel.TextSize = 12
+radiusLabel.Font = Enum.Font.GothamSemibold
+radiusLabel.TextXAlignment = Enum.TextXAlignment.Left
+radiusLabel.Parent = frame
+
+-- Radius box
+local radiusBox = Instance.new("TextBox")
+radiusBox.Size = UDim2.new(0.35, 0, 0, 22)
+radiusBox.Position = UDim2.new(0.6, 0, 0, 44)
+radiusBox.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+radiusBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+radiusBox.Text = "13"
+radiusBox.TextSize = 12
+radiusBox.Font = Enum.Font.GothamBold
+radiusBox.ClearTextOnFocus = false
+radiusBox.BorderSizePixel = 0
+radiusBox.Parent = frame
+
+local radiusBoxCorner = Instance.new("UICorner")
+radiusBoxCorner.CornerRadius = UDim.new(0, 6)
+radiusBoxCorner.Parent = radiusBox
+
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, 0, 0, 18)
+statusLabel.Position = UDim2.new(0, 0, 0, 72)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Status: OFF"
+statusLabel.TextColor3 = Color3.fromRGB(180, 80, 80)
+statusLabel.TextSize = 12
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.Parent = frame
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(0, 160, 0, 28)
+toggleBtn.Position = UDim2.new(0.5, -80, 1, -36)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+toggleBtn.Text = "ENABLE"
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleBtn.TextSize = 13
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.BorderSizePixel = 0
+toggleBtn.Parent = frame
+
+local togCorner = Instance.new("UICorner")
+togCorner.CornerRadius = UDim.new(0, 8)
+togCorner.Parent = toggleBtn
+
+toggleBtn.MouseButton1Click:Connect(function()
+    auraEnabled = not auraEnabled
+    if auraEnabled then
+        toggleBtn.Text = "DISABLE"
+        statusLabel.Text = "Status: ON"
+        statusLabel.TextColor3 = Color3.fromRGB(80, 220, 120)
+        TweenService:Create(toggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 60, 60)}):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(80, 220, 120)}):Play()
+    else
+        toggleBtn.Text = "ENABLE"
+        statusLabel.Text = "Status: OFF"
+        statusLabel.TextColor3 = Color3.fromRGB(180, 80, 80)
+        TweenService:Create(toggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(80, 80, 200)}):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(60, 60, 80)}):Play()
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    if not auraEnabled then return end
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    auraRadius = tonumber(radiusBox.Text) or 13
+
+    local nearby = workspace:GetPartBoundsInRadius(hrp.Position, auraRadius)
+    for _, part in pairs(nearby) do
+        local model = part:FindFirstAncestorOfClass("Model")
+        if model and model ~= player.Character then
+            local humanoid = model:FindFirstChildOfClass("Humanoid")
+            local npcHRP = model:FindFirstChild("HumanoidRootPart")
+            if humanoid and npcHRP and not Players:GetPlayerFromCharacter(model) then
+                pcall(function()
+                    humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+                end)
+            end
+        end
+    end
+end)
+
+print("Kill Aura loaded!")
