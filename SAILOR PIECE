@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
 
-if game.PlaceId ~= 77747658251236 then return end
+if game.PlaceId == 77747658251236 or game.PlaceId == 99684056491472 then return end
 
 local RS = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
