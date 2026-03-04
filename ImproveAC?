@@ -1,0 +1,201 @@
+local Players = game:GetService("Players")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AutoClicker"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 220, 0, 160)
+frame.Position = UDim2.new(0.5, -110, 0.5, -80)
+frame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = frame
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(60, 60, 80)
+stroke.Thickness = 1.5
+stroke.Parent = frame
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 35)
+title.Position = UDim2.new(0, 0, 0, 5)
+title.BackgroundTransparency = 1
+title.Text = "🖱 AUTO CLICKER"
+title.TextColor3 = Color3.fromRGB(220, 220, 255)
+title.TextSize = 14
+title.Font = Enum.Font.GothamBold
+title.Parent = frame
+
+-- Minimize button
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 24, 0, 24)
+minBtn.Position = UDim2.new(1, -30, 0, 6)
+minBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+minBtn.Text = "-"
+minBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minBtn.TextSize = 16
+minBtn.Font = Enum.Font.GothamBold
+minBtn.BorderSizePixel = 0
+minBtn.Parent = frame
+
+local minBtnCorner = Instance.new("UICorner")
+minBtnCorner.CornerRadius = UDim.new(0, 6)
+minBtnCorner.Parent = minBtn
+
+-- CPS label
+local cpsLabel = Instance.new("TextLabel")
+cpsLabel.Size = UDim2.new(0.5, 0, 0, 25)
+cpsLabel.Position = UDim2.new(0, 10, 0, 45)
+cpsLabel.BackgroundTransparency = 1
+cpsLabel.Text = "CPS:"
+cpsLabel.TextColor3 = Color3.fromRGB(180, 180, 255)
+cpsLabel.TextSize = 13
+cpsLabel.Font = Enum.Font.GothamSemibold
+cpsLabel.TextXAlignment = Enum.TextXAlignment.Left
+cpsLabel.Parent = frame
+
+-- CPS box
+local speedBox = Instance.new("TextBox")
+speedBox.Size = UDim2.new(0.4, 0, 0, 25)
+speedBox.Position = UDim2.new(0.55, 0, 0, 45)
+speedBox.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedBox.Text = "20"
+speedBox.TextSize = 13
+speedBox.Font = Enum.Font.GothamBold
+speedBox.ClearTextOnFocus = false
+speedBox.BorderSizePixel = 0
+speedBox.Parent = frame
+
+local boxCorner = Instance.new("UICorner")
+boxCorner.CornerRadius = UDim.new(0, 6)
+boxCorner.Parent = speedBox
+
+-- Status label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, 0, 0, 20)
+statusLabel.Position = UDim2.new(0, 0, 0, 80)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Status: OFF"
+statusLabel.TextColor3 = Color3.fromRGB(180, 80, 80)
+statusLabel.TextSize = 12
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.Parent = frame
+
+-- Toggle button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 160, 0, 30)
+toggleButton.Position = UDim2.new(0.5, -80, 1, -40)
+toggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Text = "ENABLE"
+toggleButton.TextSize = 13
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.BorderSizePixel = 0
+toggleButton.Parent = frame
+
+local togCorner = Instance.new("UICorner")
+togCorner.CornerRadius = UDim.new(0, 8)
+togCorner.Parent = toggleButton
+
+-- Target icon
+local target = Instance.new("ImageButton")
+target.Size = UDim2.new(0, 40, 0, 40)
+target.Position = UDim2.new(0.5, -20, 0.5, -20)
+target.BackgroundTransparency = 1
+target.Image = "rbxassetid://7072718362"
+target.ZIndex = 200
+target.Active = true
+target.Draggable = true
+target.Parent = screenGui
+
+-- Mini circle when minimized
+local miniCircle = Instance.new("TextButton")
+miniCircle.Size = UDim2.new(0, 50, 0, 50)
+miniCircle.Position = UDim2.new(0.5, -25, 0.5, -25)
+miniCircle.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+miniCircle.Text = "🖱"
+miniCircle.TextSize = 20
+miniCircle.Font = Enum.Font.GothamBold
+miniCircle.BorderSizePixel = 0
+miniCircle.Visible = false
+miniCircle.Active = true
+miniCircle.Draggable = true
+miniCircle.Parent = screenGui
+
+local miniCorner = Instance.new("UICorner")
+miniCorner.CornerRadius = UDim.new(1, 0)
+miniCorner.Parent = miniCircle
+
+-- Logic
+local clicking = false
+local clickThread
+
+local function getCPS()
+    local n = tonumber(speedBox.Text)
+    if not n or n < 1 then return 1 end
+    if n > 1000 then return 1000 end
+    return n
+end
+
+local function startClicking()
+    if clickThread then return end
+    clickThread = task.spawn(function()
+        while clicking do
+            local cps = getCPS()
+            local pos = target.AbsolutePosition + (target.AbsoluteSize / 2)
+            local x = math.floor(pos.X)
+            local y = math.floor(pos.Y)
+            VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 0)
+            VirtualInputManager:SendMouseButtonEvent(x, y, 0, false, game, 0)
+            task.wait(1 / cps)
+        end
+    end)
+end
+
+local function stopClicking()
+    clicking = false
+    clickThread = nil
+end
+
+toggleButton.MouseButton1Click:Connect(function()
+    clicking = not clicking
+    if clicking then
+        toggleButton.Text = "DISABLE"
+        statusLabel.Text = "Status: ON"
+        statusLabel.TextColor3 = Color3.fromRGB(80, 220, 120)
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 60, 60)}):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(80, 220, 120)}):Play()
+        startClicking()
+    else
+        toggleButton.Text = "ENABLE"
+        statusLabel.Text = "Status: OFF"
+        statusLabel.TextColor3 = Color3.fromRGB(180, 80, 80)
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(80, 80, 200)}):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(60, 60, 80)}):Play()
+        stopClicking()
+    end
+end)
+
+minBtn.MouseButton1Click:Connect(function()
+    frame.Visible = false
+    miniCircle.Visible = true
+end)
+
+miniCircle.MouseButton1Click:Connect(function()
+    frame.Visible = true
+    miniCircle.Visible = false
+end)
+
+print("Auto Clicker loaded!")
