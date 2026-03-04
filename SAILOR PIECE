@@ -198,17 +198,19 @@ gotoToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+local m1Enabled = false
+
 local function updateUI()
     if autoEnabled then
-        StatusLabel.Text = "Status: ON"
+        StatusLabel.Text = "Skill: ON"
         StatusLabel.TextColor3 = Color3.fromRGB(80, 220, 120)
-        Button.Text = "DISABLE"
+        Button.Text = "SKILL: ON"
         TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 60, 60)}):Play()
         TweenService:Create(Stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(80, 220, 120)}):Play()
     else
-        StatusLabel.Text = "Status: OFF"
+        StatusLabel.Text = "Skill: OFF"
         StatusLabel.TextColor3 = Color3.fromRGB(180, 80, 80)
-        Button.Text = "ENABLE"
+        Button.Text = "SKILL: OFF"
         TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(80, 80, 200)}):Play()
         TweenService:Create(Stroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(60, 60, 80)}):Play()
     end
@@ -226,6 +228,17 @@ Button.MouseButton1Click:Connect(function()
         end)
     end
     updateUI()
+end)
+
+Button2.MouseButton1Click:Connect(function()
+    m1Enabled = not m1Enabled
+    if m1Enabled then
+        Button2.Text = "M1: ON"
+        Button2.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+    else
+        Button2.Text = "M1: OFF"
+        Button2.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+    end
 end)
 
 local function fireAllSkills()
