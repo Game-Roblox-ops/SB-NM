@@ -62,12 +62,12 @@ StatusLabel.Font = Enum.Font.Gotham
 StatusLabel.Parent = Frame
 
 local Button = Instance.new("TextButton")
-Button.Size = UDim2.new(0, 140, 0, 28)
-Button.Position = UDim2.new(0.5, -70, 1, -38)
+Button.Size = UDim2.new(0, 90, 0, 28)
+Button.Position = UDim2.new(0, 8, 1, -38)
 Button.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
-Button.Text = "ENABLE"
+Button.Text = "SKILL: OFF"
 Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button.TextSize = 13
+Button.TextSize = 11
 Button.Font = Enum.Font.GothamBold
 Button.BorderSizePixel = 0
 Button.Parent = Frame
@@ -75,6 +75,21 @@ Button.Parent = Frame
 local BtnCorner = Instance.new("UICorner")
 BtnCorner.CornerRadius = UDim.new(0, 8)
 BtnCorner.Parent = Button
+
+local Button2 = Instance.new("TextButton")
+Button2.Size = UDim2.new(0, 90, 0, 28)
+Button2.Position = UDim2.new(1, -98, 1, -38)
+Button2.BackgroundColor3 = Color3.fromRGB(80, 80, 200)
+Button2.Text = "M1: OFF"
+Button2.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button2.TextSize = 11
+Button2.Font = Enum.Font.GothamBold
+Button2.BorderSizePixel = 0
+Button2.Parent = Frame
+
+local Btn2Corner = Instance.new("UICorner")
+Btn2Corner.CornerRadius = UDim.new(0, 8)
+Btn2Corner.Parent = Button2
 
 -- Boss UI
 local bossNames = {"GojoBoss", "JinwooBoss", "MadokaBoss", "SukunaBoss", "YujiBoss", "AizenBoss"}
