@@ -242,7 +242,7 @@ Button2.MouseButton1Click:Connect(function()
 end)
 
 local function fireAllSkills()
-    AbilityRemote:FireServer(1)
+    AbilityRemote:FireServer(5)
     task.wait(delay)
     AbilityRemote:FireServer(2)
     task.wait(delay)
