@@ -6,8 +6,8 @@ if game.PlaceId ~= 77747658251236 and game.PlaceId ~= 99684056491472 and game.Pl
 then return end
 
 -- Auto Equip Settings (change true/false as needed)
-local autoEquipDarkBlade = true
-local autoEquipQuake = true
+local autoEquipDarkBlade = false
+local autoEquipQuake = false
 local autoEquipStrongest = true
 
 
