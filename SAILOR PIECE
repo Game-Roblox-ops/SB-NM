@@ -228,8 +228,15 @@ Button.MouseButton1Click:Connect(function()
         pcall(function()
             local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
-                humanoid:EquipTool(player.Backpack["Dark Blade"])
-                humanoid:EquipTool(player.Backpack.Quake)
+                if autoEquipDarkBlade then
+                    humanoid:EquipTool(player.Backpack["Dark Blade"])
+                end
+                if autoEquipQuake then
+                    humanoid:EquipTool(player.Backpack.Quake)
+                end
+                if autoEquipStrongest then
+                    humanoid:EquipTool(player.Backpack["Strongest In History"])
+                end
             end
         end)
     end
