@@ -7,7 +7,7 @@ then return end
 
 -- Auto Equip Settings (change true/false as needed)
 local autoEquipDarkBlade = false
-local autoEquipQuake = false
+local autoEquipQuake = true
 local autoEquipStrongest = true
 local autoEquipGilgamesh = true
 
