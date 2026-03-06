@@ -27,7 +27,7 @@ local function autoEquip()
             if autoEquipStrongest then
     humanoid:EquipTool(player.Backpack["Strongest In History"])
 end
-if autoEquipGilgamesh then
+            if autoEquipGilgamesh then
     humanoid:EquipTool(player.Backpack.Gilgamesh)
 end
         end
