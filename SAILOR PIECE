@@ -5,7 +5,6 @@ local playerGui = player.PlayerGui
 if game.PlaceId ~= 77747658251236 and game.PlaceId ~= 99684056491472 and game.PlaceId ~= 75159314259063 and game.PlaceId ~= 96767841099256 
 then return end
 
-
 -- Auto Equip Settings (change true/false as needed)
 local autoEquipDarkBlade = false
 local autoEquipQuake = false
@@ -18,18 +17,18 @@ local function autoEquip()
     pcall(function()
         local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
         if humanoid then
-            if autoEquipDarkBlade then
+            if autoEquipDarkBlade and player.Backpack:FindFirstChild("Dark Blade") then
                 humanoid:EquipTool(player.Backpack["Dark Blade"])
             end
-            if autoEquipQuake then
+            if autoEquipQuake and player.Backpack:FindFirstChild("Quake") then
                 humanoid:EquipTool(player.Backpack.Quake)
             end
-            if autoEquipStrongest then
-    humanoid:EquipTool(player.Backpack["Strongest In History"])
-end
-            if autoEquipGilgamesh then
-    humanoid:EquipTool(player.Backpack.Gilgamesh)
-end
+            if autoEquipStrongest and player.Backpack:FindFirstChild("Strongest In History") then
+                humanoid:EquipTool(player.Backpack["Strongest In History"])
+            end
+            if autoEquipGilgamesh and player.Backpack:FindFirstChild("Gilgamesh") then
+                humanoid:EquipTool(player.Backpack.Gilgamesh)
+            end
         end
     end)
 end
@@ -321,7 +320,7 @@ task.spawn(function()
                 if not hrp then return end
                 local closestNPC = nil
                 local closestDist = 30
-                for _, v in pairs(workspace.NPCs:GetDescendants()) do
+                for _, v in pairs(workspace.NPCs:GetChildren()) do
                     if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
                         local npcHRP = v:FindFirstChild("HumanoidRootPart")
                         local dist = (hrp.Position - npcHRP.Position).Magnitude
