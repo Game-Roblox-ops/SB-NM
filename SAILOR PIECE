@@ -25,8 +25,11 @@ local function autoEquip()
                 humanoid:EquipTool(player.Backpack.Quake)
             end
             if autoEquipStrongest then
-                humanoid:EquipTool(player.Backpack["Strongest In History"])
-            end
+    humanoid:EquipTool(player.Backpack["Strongest In History"])
+end
+if autoEquipGilgamesh then
+    humanoid:EquipTool(player.Backpack.Gilgamesh)
+end
         end
     end)
 end
