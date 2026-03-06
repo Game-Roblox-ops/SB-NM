@@ -122,7 +122,7 @@ Btn2Corner.CornerRadius = UDim.new(0, 8)
 Btn2Corner.Parent = Button2
 
 -- Boss UI
-local bossNames = {"GojoBoss", "JinwooBoss", "MadokaBoss", "SukunaBoss", "YujiBoss", "AizenBoss"}
+local bossNames = {"GojoBoss", "JinwooBoss", "MadokaBoss", "SukunaBoss", "YujiBoss", "AizenBoss", "GilgameshBoss"}
 local selectedBoss = bossNames[1]
 
 local bossFrame = Instance.new("Frame")
@@ -163,10 +163,14 @@ selectedLabel.TextSize = 11
 selectedLabel.Font = Enum.Font.Gotham
 selectedLabel.Parent = bossFrame
 
-local bossListFrame = Instance.new("Frame")
+local bossListFrame = Instance.new("ScrollingFrame")
 bossListFrame.Size = UDim2.new(1, -10, 0, 150)
 bossListFrame.Position = UDim2.new(0, 5, 0, 60)
 bossListFrame.BackgroundTransparency = 1
+bossListFrame.ScrollBarThickness = 4
+bossListFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 200)
+bossListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+bossListFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 bossListFrame.Parent = bossFrame
 
 local bossListLayout = Instance.new("UIListLayout")
@@ -175,7 +179,7 @@ bossListLayout.Parent = bossListFrame
 
 for _, name in ipairs(bossNames) do
     local bossBtn = Instance.new("TextButton")
-    bossBtn.Size = UDim2.new(1, 0, 0, 22)
+    bossBtn.Size = UDim2.new(1, -8, 0, 22)
     bossBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
     bossBtn.Text = name
     bossBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
