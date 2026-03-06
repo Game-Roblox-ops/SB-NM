@@ -10,6 +10,30 @@ local autoEquipDarkBlade = false
 local autoEquipQuake = false
 local autoEquipStrongest = true
 
+-- Auto equip function
+local function autoEquip()
+    task.wait(1)
+    pcall(function()
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            if autoEquipDarkBlade then
+                humanoid:EquipTool(player.Backpack["Dark Blade"])
+            end
+            if autoEquipQuake then
+                humanoid:EquipTool(player.Backpack.Quake)
+            end
+            if autoEquipStrongest then
+                humanoid:EquipTool(player.Backpack["Strongest In History"])
+            end
+        end
+    end)
+end
+
+autoEquip()
+
+player.CharacterAdded:Connect(function()
+    autoEquip()
+end)
 
 local RS = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
