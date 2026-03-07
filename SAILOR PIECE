@@ -6,7 +6,7 @@ if game.PlaceId ~= 77747658251236 and game.PlaceId ~= 99684056491472 and game.Pl
 then return end
 
 -- Auto Equip Settings
-local autoEquipSlot = 1 -- change slot number (1, 2, 3, etc.)
+local autoEquipSlot = 3 -- change slot number (1, 2, 3, etc.)
 
 -- Auto equip function
 local function autoEquip()
