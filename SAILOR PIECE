@@ -5,11 +5,8 @@ local playerGui = player.PlayerGui
 if game.PlaceId ~= 77747658251236 and game.PlaceId ~= 99684056491472 and game.PlaceId ~= 75159314259063 and game.PlaceId ~= 96767841099256 
 then return end
 
--- Auto Equip Settings (change true/false as needed)
-local autoEquipDarkBlade = false
-local autoEquipQuake = true
-local autoEquipStrongest = true
-local autoEquipGilgamesh = true
+-- Auto Equip Settings
+local autoEquipSlot = 1 -- change slot number (1, 2, 3, etc.)
 
 -- Auto equip function
 local function autoEquip()
@@ -17,20 +14,10 @@ local function autoEquip()
     pcall(function()
         local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
         if humanoid then
-            if autoEquipDarkBlade and player.Backpack:FindFirstChild("Dark Blade") then
-                humanoid:EquipTool(player.Backpack["Dark Blade"])
-            end
-            if autoEquipQuake and player.Backpack:FindFirstChild("Quake") then
-                humanoid:EquipTool(player.Backpack.Quake)
-            end
-            if autoEquipStrongest and player.Backpack:FindFirstChild("Strongest In History") then
-    humanoid:EquipTool(player.Backpack["Strongest In History"])
-end
-            if autoEquipStrongest and player.Backpack:FindFirstChild("Strongest Of Today") then
-    humanoid:EquipTool(player.Backpack["Strongest Of Today"])
-end
-            if autoEquipGilgamesh and player.Backpack:FindFirstChild("Gilgamesh") then
-                humanoid:EquipTool(player.Backpack.Gilgamesh)
+            local tools = player.Backpack:GetChildren()
+            local tool = tools[autoEquipSlot]
+            if tool and tool:IsA("Tool") then
+                humanoid:EquipTool(tool)
             end
         end
     end)
