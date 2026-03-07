@@ -17,3 +17,24 @@ end
 if game.PlaceId == 79305036070450 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Game-Roblox-ops/SB-NM/refs/heads/main/spinabaddie"))()
 end
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local autoAttackEnabled = true -- change to false to disable
+
+local HitRemote = game:GetService("ReplicatedStorage"):WaitForChild("CombatSystem"):WaitForChild("Remotes"):WaitForChild("RequestHit")
+
+task.spawn(function()
+    while true do
+        task.wait()
+        if autoAttackEnabled then
+            pcall(function()
+                HitRemote:FireServer(vector.create(248.73817443847656, 7.593865871429443, 927.54541015625))
+            end)
+        end
+    end
+end)
+
+print("Auto Attack loaded!")
