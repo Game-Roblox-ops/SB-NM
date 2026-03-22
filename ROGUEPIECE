@@ -256,7 +256,8 @@ local observationEnabled = false
 local swordEnabled = false
 local hakariEnabled = false
 local dragonSlayerEnabled = false
-local megumiEnabled = false  -- NEW
+local megumiEnabled = false
+local yamatoEnabled = false
 local autoM1Enabled = false
 
 makeToggle(combatContainer, "Auto Haki", false, function(value)
@@ -279,8 +280,12 @@ makeToggle(combatContainer, "Auto Dragon Slayer Skill", false, function(value)
     dragonSlayerEnabled = value
 end)
 
-makeToggle(combatContainer, "Auto Megumi Skill", false, function(value)  -- NEW
+makeToggle(combatContainer, "Auto Megumi Skill", false, function(value)
     megumiEnabled = value
+end)
+
+makeToggle(combatContainer, "Auto Yamato Skill", false, function(value)
+    yamatoEnabled = value
 end)
 
 makeToggle(combatContainer, "Auto M1", false, function(value)
@@ -346,9 +351,8 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
-local obsDelay = isMainGame and 0 or 0
 task.spawn(function()
-    while task.wait(obsDelay) do
+    while task.wait() do
         if observationEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
@@ -407,7 +411,6 @@ task.spawn(function()
     end
 end)
 
--- NEW: Auto Megumi Skill (Skill1–Skill4)
 task.spawn(function()
     while task.wait() do
         if megumiEnabled then
@@ -424,10 +427,23 @@ end)
 
 task.spawn(function()
     while task.wait() do
+        if yamatoEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "Skill1", "Yamato")
+                remote:FireServer("Server", "Sword", "Skill2", "Yamato")
+                remote:FireServer("Server", "Sword", "Skill3", "Yamato")
+                remote:FireServer("Server", "Sword", "Skill4", "Yamato")
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait() do
         if autoM1Enabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                -- UPDATED: Megumi M1
                 remote:FireServer("Server", "Combat", "M1s", "Megumi", 4)
             end)
         end
