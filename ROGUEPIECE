@@ -1,4 +1,3 @@
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
@@ -238,9 +237,9 @@ if isMainGame then
     end)
 
     makeToggle(mainContainer, "Boss Spawn 2", false, function(value)
-    pcall(function()
-        local button = playerGui.Button["Boss Spawn2"]
-        button.Visible = value
+        pcall(function()
+            local button = playerGui.Button["Boss Spawn2"]
+            button.Visible = value
             button.Position = UDim2.new(0.400000006, 1, 0, 0)
             button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
         end)
@@ -257,6 +256,7 @@ local observationEnabled = false
 local swordEnabled = false
 local hakariEnabled = false
 local dragonSlayerEnabled = false
+local megumiEnabled = false  -- NEW
 local autoM1Enabled = false
 
 makeToggle(combatContainer, "Auto Haki", false, function(value)
@@ -277,6 +277,10 @@ end)
 
 makeToggle(combatContainer, "Auto Dragon Slayer Skill", false, function(value)
     dragonSlayerEnabled = value
+end)
+
+makeToggle(combatContainer, "Auto Megumi Skill", false, function(value)  -- NEW
+    megumiEnabled = value
 end)
 
 makeToggle(combatContainer, "Auto M1", false, function(value)
@@ -403,12 +407,28 @@ task.spawn(function()
     end
 end)
 
+-- NEW: Auto Megumi Skill (Skill1–Skill4)
+task.spawn(function()
+    while task.wait() do
+        if megumiEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Combat", "Skill1", "Megumi")
+                remote:FireServer("Server", "Combat", "Skill2", "Megumi")
+                remote:FireServer("Server", "Combat", "Skill3", "Megumi")
+                remote:FireServer("Server", "Combat", "Skill4", "Megumi")
+            end)
+        end
+    end
+end)
+
 task.spawn(function()
     while task.wait() do
         if autoM1Enabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Sword", "M1s", "Demon Lord's Dual Dagger", 1)
+                -- UPDATED: Megumi M1
+                remote:FireServer("Server", "Combat", "M1s", "Megumi", 4)
             end)
         end
     end
