@@ -1,13 +1,3 @@
-For the path, based on what you shared, it's likely:
-
-```
-playerGui.Button["Shop Item"].Money["Summon Orb"].Buy.Button
-```
-The `.Button` at the end is usually the actual clickable TextButton.
-
-Here's a test UI with all methods toggled so you can see which one works:
-
-```lua
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
@@ -168,6 +158,3 @@ task.spawn(function()
 end)
 
 print("Buy Tester loaded!")
-```
-
-Enable them one at a time to see which one actually triggers the buy. If none work, the path might be wrong — in that case open the Explorer in your executor and navigate to `PlayerGui > Button > Shop Item` to confirm the exact path.
