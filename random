@@ -1,0 +1,173 @@
+For the path, based on what you shared, it's likely:
+
+```
+playerGui.Button["Shop Item"].Money["Summon Orb"].Buy.Button
+```
+The `.Button` at the end is usually the actual clickable TextButton.
+
+Here's a test UI with all methods toggled so you can see which one works:
+
+```lua
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player.PlayerGui
+
+local function getBtn()
+    return playerGui.Button["Shop Item"].Money["Summon Orb"].Buy.Button
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "BuyTester"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game:GetService("CoreGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 40)
+frame.Position = UDim2.new(0.5, -100, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = frame
+
+local titleBtn = Instance.new("TextButton")
+titleBtn.Size = UDim2.new(1, 0, 0, 40)
+titleBtn.BackgroundTransparency = 1
+titleBtn.Text = "⚙ Buy Tester  ▼"
+titleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleBtn.TextSize = 14
+titleBtn.Font = Enum.Font.GothamBold
+titleBtn.Parent = frame
+
+local contentFrame = Instance.new("Frame")
+contentFrame.Size = UDim2.new(1, 0, 0, 0)
+contentFrame.Position = UDim2.new(0, 0, 0, 40)
+contentFrame.BackgroundTransparency = 1
+contentFrame.ClipsDescendants = true
+contentFrame.Parent = frame
+
+local list = Instance.new("UIListLayout")
+list.Padding = UDim.new(0, 4)
+list.Parent = contentFrame
+
+local function makeToggle(labelText, onToggle)
+    local row = Instance.new("Frame")
+    row.Size = UDim2.new(1, -8, 0, 32)
+    row.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    row.BorderSizePixel = 0
+    row.Parent = contentFrame
+
+    local rowCorner = Instance.new("UICorner")
+    rowCorner.CornerRadius = UDim.new(0, 6)
+    rowCorner.Parent = row
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(0.7, 0, 1, 0)
+    label.Position = UDim2.new(0, 8, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = labelText
+    label.TextColor3 = Color3.fromRGB(220, 220, 220)
+    label.TextSize = 11
+    label.Font = Enum.Font.Gotham
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = row
+
+    local togBtn = Instance.new("TextButton")
+    togBtn.Size = UDim2.new(0, 44, 0, 22)
+    togBtn.Position = UDim2.new(1, -52, 0.5, -11)
+    togBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    togBtn.Text = "OFF"
+    togBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    togBtn.TextSize = 11
+    togBtn.Font = Enum.Font.GothamBold
+    togBtn.BorderSizePixel = 0
+    togBtn.Parent = row
+
+    local togCorner = Instance.new("UICorner")
+    togCorner.CornerRadius = UDim.new(0, 11)
+    togCorner.Parent = togBtn
+
+    local state = false
+    togBtn.MouseButton1Click:Connect(function()
+        state = not state
+        togBtn.Text = state and "ON" or "OFF"
+        togBtn.BackgroundColor3 = state and Color3.fromRGB(80, 200, 120) or Color3.fromRGB(80, 80, 80)
+        onToggle(state)
+    end)
+end
+
+-- Method flags
+local m1, m2, m3, m4, m5 = false, false, false, false, false
+
+-- Method 1: MouseButton1Click Fire
+makeToggle("M1: Click Fire", function(v) m1 = v end)
+
+-- Method 2: Activated Fire
+makeToggle("M2: Activated Fire", function(v) m2 = v end)
+
+-- Method 3: MouseButton1Down Fire
+makeToggle("M3: MouseButton1Down", function(v) m3 = v end)
+
+-- Method 4: VirtualInputManager
+makeToggle("M4: VirtualInput", function(v) m4 = v end)
+
+-- Method 5: TweenPosition trick (force visible + click)
+makeToggle("M5: Force Visible+Click", function(v) m5 = v end)
+
+list:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    contentFrame.Size = UDim2.new(1, 0, 0, list.AbsoluteContentSize.Y + 4)
+    frame.Size = UDim2.new(0, 200, 0, 40 + list.AbsoluteContentSize.Y + 8)
+end)
+
+local expanded = false
+titleBtn.MouseButton1Click:Connect(function()
+    expanded = not expanded
+    titleBtn.Text = expanded and "⚙ Buy Tester  ▲" or "⚙ Buy Tester  ▼"
+    contentFrame.Size = expanded and UDim2.new(1, 0, 0, list.AbsoluteContentSize.Y + 4) or UDim2.new(1, 0, 0, 0)
+    frame.Size = expanded and UDim2.new(0, 200, 0, 40 + list.AbsoluteContentSize.Y + 8) or UDim2.new(0, 200, 0, 40)
+end)
+
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            local btn = getBtn()
+
+            if m1 then
+                btn.MouseButton1Click:Fire()
+            end
+
+            if m2 then
+                btn.Activated:Fire()
+            end
+
+            if m3 then
+                btn.MouseButton1Down:Fire()
+            end
+
+            if m4 then
+                local pos = btn.AbsolutePosition
+                local size = btn.AbsoluteSize
+                local x = pos.X + size.X / 2
+                local y = pos.Y + size.Y / 2
+                game:GetService("VirtualInputManager"):SendMouseButtonEvent(x, y, 0, true, game, 0)
+                task.wait(0.05)
+                game:GetService("VirtualInputManager"):SendMouseButtonEvent(x, y, 0, false, game, 0)
+            end
+
+            if m5 then
+                btn.Visible = true
+                btn.Parent.Visible = true
+                btn.MouseButton1Click:Fire()
+            end
+        end)
+    end
+end)
+
+print("Buy Tester loaded!")
+```
+
+Enable them one at a time to see which one actually triggers the buy. If none work, the path might be wrong — in that case open the Explorer in your executor and navigate to `PlayerGui > Button > Shop Item` to confirm the exact path.
