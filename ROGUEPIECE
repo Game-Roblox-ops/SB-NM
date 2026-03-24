@@ -13,8 +13,8 @@ screenGui.ResetOnSpawn = false
 screenGui.Parent = game:GetService("CoreGui")
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 200, 0, 40)
-mainFrame.Position = UDim2.new(0.5, -100, 0, 10)
+mainFrame.Size = UDim2.new(0, 210, 0, 40)
+mainFrame.Position = UDim2.new(0.5, -105, 0, 10)
 mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -75,6 +75,7 @@ UILayout.SortOrder = Enum.SortOrder.LayoutOrder
 UILayout.Padding = UDim.new(0, 4)
 UILayout.Parent = contentFrame
 
+-- Tab row
 local tabFrame = Instance.new("Frame")
 tabFrame.Size = UDim2.new(1, 0, 0, 30)
 tabFrame.BackgroundTransparency = 1
@@ -83,16 +84,16 @@ tabFrame.Parent = contentFrame
 
 local tabLayout = Instance.new("UIListLayout")
 tabLayout.FillDirection = Enum.FillDirection.Horizontal
-tabLayout.Padding = UDim.new(0, 4)
+tabLayout.Padding = UDim.new(0, 3)
 tabLayout.Parent = tabFrame
 
 local function makeTabBtn(text, color, order)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.48, 0, 1, 0)
+    btn.Size = UDim2.new(0.31, 0, 1, 0)
     btn.BackgroundColor3 = color
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 12
+    btn.TextSize = 11
     btn.Font = Enum.Font.GothamBold
     btn.BorderSizePixel = 0
     btn.LayoutOrder = order
@@ -103,16 +104,20 @@ local function makeTabBtn(text, color, order)
     return btn
 end
 
-local mainTabBtn
-local combatTabBtn
+local mainTabBtn = nil
+local combatTabBtn = nil
+local skillsTabBtn = nil
 
 if isMainGame then
     mainTabBtn = makeTabBtn("Main", Color3.fromRGB(70, 130, 220), 1)
     combatTabBtn = makeTabBtn("Combat", Color3.fromRGB(50, 50, 50), 2)
+    skillsTabBtn = makeTabBtn("Skills", Color3.fromRGB(50, 50, 50), 3)
 else
     combatTabBtn = makeTabBtn("Combat", Color3.fromRGB(150, 70, 220), 1)
+    skillsTabBtn = makeTabBtn("Skills", Color3.fromRGB(50, 50, 50), 2)
 end
 
+-- Main container
 local mainContainer = Instance.new("Frame")
 mainContainer.Size = UDim2.new(1, 0, 0, 0)
 mainContainer.BackgroundTransparency = 1
@@ -124,17 +129,49 @@ local mainList = Instance.new("UIListLayout")
 mainList.Padding = UDim.new(0, 4)
 mainList.Parent = mainContainer
 
+-- Combat scroll
+local combatScroll = Instance.new("ScrollingFrame")
+combatScroll.Size = UDim2.new(1, 0, 0, 0)
+combatScroll.BackgroundTransparency = 1
+combatScroll.BorderSizePixel = 0
+combatScroll.ScrollBarThickness = 3
+combatScroll.ScrollBarImageColor3 = Color3.fromRGB(150, 70, 220)
+combatScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+combatScroll.LayoutOrder = 1
+combatScroll.Visible = isRaid
+combatScroll.Parent = contentFrame
+
 local combatContainer = Instance.new("Frame")
 combatContainer.Size = UDim2.new(1, 0, 0, 0)
 combatContainer.BackgroundTransparency = 1
-combatContainer.LayoutOrder = 1
-combatContainer.Visible = isRaid
-combatContainer.Parent = contentFrame
+combatContainer.Parent = combatScroll
 
 local combatList = Instance.new("UIListLayout")
 combatList.Padding = UDim.new(0, 4)
 combatList.Parent = combatContainer
 
+-- Skills scroll
+local skillsScroll = Instance.new("ScrollingFrame")
+skillsScroll.Size = UDim2.new(1, 0, 0, 0)
+skillsScroll.BackgroundTransparency = 1
+skillsScroll.BorderSizePixel = 0
+skillsScroll.ScrollBarThickness = 3
+skillsScroll.ScrollBarImageColor3 = Color3.fromRGB(220, 150, 50)
+skillsScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+skillsScroll.LayoutOrder = 1
+skillsScroll.Visible = false
+skillsScroll.Parent = contentFrame
+
+local skillsContainer = Instance.new("Frame")
+skillsContainer.Size = UDim2.new(1, 0, 0, 0)
+skillsContainer.BackgroundTransparency = 1
+skillsContainer.Parent = skillsScroll
+
+local skillsList = Instance.new("UIListLayout")
+skillsList.Padding = UDim.new(0, 4)
+skillsList.Parent = skillsContainer
+
+-- Toggle maker
 local function makeToggle(parent, labelText, startState, onToggle)
     local row = Instance.new("Frame")
     row.Size = UDim2.new(1, -8, 0, 32)
@@ -183,10 +220,24 @@ local function makeToggle(parent, labelText, startState, onToggle)
     return row
 end
 
+-- Section label maker
+local function makeLabel(parent, text)
+    local lbl = Instance.new("TextLabel")
+    lbl.Size = UDim2.new(1, -8, 0, 20)
+    lbl.BackgroundTransparency = 1
+    lbl.Text = text
+    lbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+    lbl.TextSize = 11
+    lbl.Font = Enum.Font.GothamBold
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    lbl.Parent = parent
+end
+
 local function updateSize(container, listLayout)
     container.Size = UDim2.new(1, 0, 0, listLayout.AbsoluteContentSize.Y + 4)
 end
 
+-- Main tab content
 if isMainGame then
     makeToggle(mainContainer, "Boss Spawn", false, function(value)
         pcall(function()
@@ -251,13 +302,9 @@ if isMainGame then
     updateSize(mainContainer, mainList)
 end
 
+-- Combat tab toggles
 local hakiEnabled = false
 local observationEnabled = false
-local swordEnabled = false
-local hakariEnabled = false
-local dragonSlayerEnabled = false
-local megumiEnabled = false
-local yamatoEnabled = false
 local autoM1Enabled = false
 
 makeToggle(combatContainer, "Auto Haki", false, function(value)
@@ -268,53 +315,94 @@ makeToggle(combatContainer, "Auto Observation Haki", false, function(value)
     observationEnabled = value
 end)
 
-makeToggle(combatContainer, "Auto Sword Skill", false, function(value)
-    swordEnabled = value
-end)
-
-makeToggle(combatContainer, "Auto Hakari Skill", false, function(value)
-    hakariEnabled = value
-end)
-
-makeToggle(combatContainer, "Auto Dragon Slayer Skill", false, function(value)
-    dragonSlayerEnabled = value
-end)
-
-makeToggle(combatContainer, "Auto Megumi Skill", false, function(value)
-    megumiEnabled = value
-end)
-
-makeToggle(combatContainer, "Auto Yamato Skill", false, function(value)
-    yamatoEnabled = value
-end)
-
 makeToggle(combatContainer, "Auto M1", false, function(value)
     autoM1Enabled = value
 end)
 
 combatList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    updateSize(combatContainer, combatList)
+    local h = combatList.AbsoluteContentSize.Y + 8
+    combatContainer.Size = UDim2.new(1, 0, 0, h)
+    combatScroll.CanvasSize = UDim2.new(0, 0, 0, h)
 end)
-updateSize(combatContainer, combatList)
 
+-- Skills tab
+-- Weapons list per skill type
+local combatWeapons = {"Megumi", "Hakari", "Dante"}
+local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer"}
+
+local zEnabled = false
+local xEnabled = false
+local cEnabled = false
+local vEnabled = false
+local fEnabled = false
+
+makeLabel(skillsContainer, "  ⚔ Combined Skill Keys")
+
+makeToggle(skillsContainer, "Auto Z  (Skill1 - All)", false, function(value)
+    zEnabled = value
+end)
+
+makeToggle(skillsContainer, "Auto X  (Skill2 - All)", false, function(value)
+    xEnabled = value
+end)
+
+makeToggle(skillsContainer, "Auto C  (Skill3 - All)", false, function(value)
+    cEnabled = value
+end)
+
+makeToggle(skillsContainer, "Auto V  (Skill4 - All)", false, function(value)
+    vEnabled = value
+end)
+
+makeToggle(skillsContainer, "Auto F  (Skill5 - All)", false, function(value)
+    fEnabled = value
+end)
+
+skillsList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    local h = skillsList.AbsoluteContentSize.Y + 8
+    skillsContainer.Size = UDim2.new(1, 0, 0, h)
+    skillsScroll.CanvasSize = UDim2.new(0, 0, 0, h)
+end)
+
+-- Tab switching
 local activeTab = isRaid and "combat" or "main"
+local MAX_HEIGHT = 300
+
+local COLOR_ACTIVE_MAIN    = Color3.fromRGB(70, 130, 220)
+local COLOR_ACTIVE_COMBAT  = Color3.fromRGB(150, 70, 220)
+local COLOR_ACTIVE_SKILLS  = Color3.fromRGB(220, 150, 50)
+local COLOR_INACTIVE       = Color3.fromRGB(50, 50, 50)
+
+local function switchTab(tab)
+    activeTab = tab
+    mainContainer.Visible = false
+    combatScroll.Visible = false
+    skillsScroll.Visible = false
+    if mainTabBtn then mainTabBtn.BackgroundColor3 = COLOR_INACTIVE end
+    if combatTabBtn then combatTabBtn.BackgroundColor3 = COLOR_INACTIVE end
+    if skillsTabBtn then skillsTabBtn.BackgroundColor3 = COLOR_INACTIVE end
+
+    if tab == "main" then
+        mainContainer.Visible = true
+        if mainTabBtn then mainTabBtn.BackgroundColor3 = COLOR_ACTIVE_MAIN end
+    elseif tab == "combat" then
+        combatScroll.Visible = true
+        if combatTabBtn then combatTabBtn.BackgroundColor3 = COLOR_ACTIVE_COMBAT end
+    elseif tab == "skills" then
+        skillsScroll.Visible = true
+        if skillsTabBtn then skillsTabBtn.BackgroundColor3 = COLOR_ACTIVE_SKILLS end
+    end
+end
 
 if isMainGame then
-    mainTabBtn.MouseButton1Click:Connect(function()
-        activeTab = "main"
-        mainContainer.Visible = true
-        combatContainer.Visible = false
-        mainTabBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 220)
-        combatTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    end)
-
-    combatTabBtn.MouseButton1Click:Connect(function()
-        activeTab = "combat"
-        mainContainer.Visible = false
-        combatContainer.Visible = true
-        combatTabBtn.BackgroundColor3 = Color3.fromRGB(150, 70, 220)
-        mainTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    end)
+    switchTab("main")
+    mainTabBtn.MouseButton1Click:Connect(function() switchTab("main") end)
+    combatTabBtn.MouseButton1Click:Connect(function() switchTab("combat") end)
+    skillsTabBtn.MouseButton1Click:Connect(function() switchTab("skills") end)
+else
+    switchTab("combat")
+    combatTabBtn.MouseButton1Click:Connect(function() switchTab("combat") end)
+    skillsTabBtn.MouseButton1Click:Connect(function() switchTab("skills") end)
 end
 
 local expanded = false
@@ -322,15 +410,28 @@ titleBtn.MouseButton1Click:Connect(function()
     expanded = not expanded
     titleBtn.Text = expanded and "⚙ Menu  ▲" or "⚙ Menu  ▼"
     if expanded then
-        local totalHeight = 40 + 30 + 4 + (activeTab == "main" and mainList.AbsoluteContentSize.Y or combatList.AbsoluteContentSize.Y) + 12
-        mainFrame.Size = UDim2.new(0, 200, 0, totalHeight)
+        local contentH
+        if activeTab == "main" then
+            contentH = mainList.AbsoluteContentSize.Y
+        elseif activeTab == "combat" then
+            contentH = combatList.AbsoluteContentSize.Y
+        else
+            contentH = skillsList.AbsoluteContentSize.Y
+        end
+        local clampedH = math.min(contentH, MAX_HEIGHT)
+        local totalHeight = 40 + 30 + 4 + clampedH + 12
+        mainFrame.Size = UDim2.new(0, 210, 0, totalHeight)
         contentFrame.Size = UDim2.new(1, 0, 0, totalHeight - 40)
+        combatScroll.Size = UDim2.new(1, 0, 0, clampedH)
+        skillsScroll.Size = UDim2.new(1, 0, 0, clampedH)
+        if isMainGame then updateSize(mainContainer, mainList) end
     else
-        mainFrame.Size = UDim2.new(0, 200, 0, 40)
+        mainFrame.Size = UDim2.new(0, 210, 0, 40)
         contentFrame.Size = UDim2.new(1, 0, 0, 0)
     end
 end)
 
+-- Haki loop
 local hakiDelay = isMainGame and 5 or 0
 task.spawn(function()
     while task.wait(hakiDelay) do
@@ -351,6 +452,7 @@ player.CharacterAdded:Connect(function()
     end
 end)
 
+-- Observation loop
 task.spawn(function()
     while task.wait() do
         if observationEnabled then
@@ -365,80 +467,7 @@ task.spawn(function()
     end
 end)
 
-task.spawn(function()
-    while task.wait() do
-        if swordEnabled then
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Sword", "Skill1", "Inverted Spear of Heaven")
-                remote:FireServer("Server", "Sword", "Skill2", "Inverted Spear of Heaven")
-                remote:FireServer("Server", "Sword", "Skill3", "Inverted Spear of Heaven")
-                remote:FireServer("Server", "Sword", "Skill", "Inverted Spear of Heaven")
-                remote:FireServer("Server", "Sword", "Skill1", "Demon Lord's Dual Dagger")
-                remote:FireServer("Server", "Sword", "Skill2", "Demon Lord's Dual Dagger")
-                remote:FireServer("Server", "Sword", "Skill3", "Demon Lord's Dual Dagger")
-                remote:FireServer("Server", "Sword", "Skill4", "Demon Lord's Dual Dagger")
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    while task.wait() do
-        if hakariEnabled then
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Combat", "Skill1", "Hakari")
-                remote:FireServer("Server", "Combat", "Skill2", "Hakari")
-                remote:FireServer("Server", "Combat", "Skill3", "Hakari")
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    while task.wait() do
-        if dragonSlayerEnabled then
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Sword", "Skill1", "Dragon Slayer")
-                remote:FireServer("Server", "Sword", "Skill2", "Dragon Slayer")
-                remote:FireServer("Server", "Sword", "Skill3", "Dragon Slayer")
-                remote:FireServer("Server", "Sword", "Skill4", "Dragon Slayer")
-                remote:FireServer("Server", "Sword", "Skill5", "Dragon Slayer")
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    while task.wait() do
-        if megumiEnabled then
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Combat", "Skill1", "Megumi")
-                remote:FireServer("Server", "Combat", "Skill2", "Megumi")
-                remote:FireServer("Server", "Combat", "Skill3", "Megumi")
-                remote:FireServer("Server", "Combat", "Skill4", "Megumi")
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    while task.wait() do
-        if yamatoEnabled then
-            pcall(function()
-                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Sword", "Skill1", "Yamato")
-                remote:FireServer("Server", "Sword", "Skill2", "Yamato")
-                remote:FireServer("Server", "Sword", "Skill3", "Yamato")
-                remote:FireServer("Server", "Sword", "Skill4", "Yamato")
-            end)
-        end
-    end
-end)
-
+-- Auto M1
 task.spawn(function()
     while task.wait() do
         if autoM1Enabled then
@@ -449,5 +478,34 @@ task.spawn(function()
         end
     end
 end)
+
+-- Skills loops (Z/X/C/V/F fire all weapons)
+local skillMap = {
+    {flag = function() return zEnabled end, key = "Skill1"},
+    {flag = function() return xEnabled end, key = "Skill2"},
+    {flag = function() return cEnabled end, key = "Skill3"},
+    {flag = function() return vEnabled end, key = "Skill4"},
+    {flag = function() return fEnabled end, key = "Skill5"},
+}
+
+for _, entry in ipairs(skillMap) do
+    task.spawn(function()
+        while task.wait() do
+            if entry.flag() then
+                pcall(function()
+                    local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                    -- Combat weapons
+                    for _, w in ipairs(combatWeapons) do
+                        remote:FireServer("Server", "Combat", entry.key, w)
+                    end
+                    -- Sword weapons
+                    for _, w in ipairs(swordWeapons) do
+                        remote:FireServer("Server", "Sword", entry.key, w)
+                    end
+                end)
+            end
+        end
+    end)
+end
 
 print("Rogue Piece UI loaded!")
