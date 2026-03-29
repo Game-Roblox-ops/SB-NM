@@ -328,7 +328,7 @@ end)
 -- Skills tab
 -- Weapons list per skill type
 local combatWeapons = {"Megumi", "Hakari", "Dante"}
-local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer"}
+local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff"}
 
 local zEnabled = false
 local xEnabled = false
