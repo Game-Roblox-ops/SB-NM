@@ -75,7 +75,6 @@ UILayout.SortOrder = Enum.SortOrder.LayoutOrder
 UILayout.Padding = UDim.new(0, 4)
 UILayout.Parent = contentFrame
 
--- Tab row
 local tabFrame = Instance.new("Frame")
 tabFrame.Size = UDim2.new(1, 0, 0, 30)
 tabFrame.BackgroundTransparency = 1
@@ -117,7 +116,6 @@ else
     skillsTabBtn = makeTabBtn("Skills", Color3.fromRGB(50, 50, 50), 2)
 end
 
--- Main container
 local mainContainer = Instance.new("Frame")
 mainContainer.Size = UDim2.new(1, 0, 0, 0)
 mainContainer.BackgroundTransparency = 1
@@ -129,7 +127,6 @@ local mainList = Instance.new("UIListLayout")
 mainList.Padding = UDim.new(0, 4)
 mainList.Parent = mainContainer
 
--- Combat scroll
 local combatScroll = Instance.new("ScrollingFrame")
 combatScroll.Size = UDim2.new(1, 0, 0, 0)
 combatScroll.BackgroundTransparency = 1
@@ -150,7 +147,6 @@ local combatList = Instance.new("UIListLayout")
 combatList.Padding = UDim.new(0, 4)
 combatList.Parent = combatContainer
 
--- Skills scroll
 local skillsScroll = Instance.new("ScrollingFrame")
 skillsScroll.Size = UDim2.new(1, 0, 0, 0)
 skillsScroll.BackgroundTransparency = 1
@@ -171,7 +167,6 @@ local skillsList = Instance.new("UIListLayout")
 skillsList.Padding = UDim.new(0, 4)
 skillsList.Parent = skillsContainer
 
--- Toggle maker
 local function makeToggle(parent, labelText, startState, onToggle)
     local row = Instance.new("Frame")
     row.Size = UDim2.new(1, -8, 0, 32)
@@ -220,7 +215,6 @@ local function makeToggle(parent, labelText, startState, onToggle)
     return row
 end
 
--- Section label maker
 local function makeLabel(parent, text)
     local lbl = Instance.new("TextLabel")
     lbl.Size = UDim2.new(1, -8, 0, 20)
@@ -237,7 +231,6 @@ local function updateSize(container, listLayout)
     container.Size = UDim2.new(1, 0, 0, listLayout.AbsoluteContentSize.Y + 4)
 end
 
--- Main tab content
 if isMainGame then
     makeToggle(mainContainer, "Boss Spawn", false, function(value)
         pcall(function()
@@ -296,16 +289,36 @@ if isMainGame then
         end)
     end)
 
+    makeToggle(mainContainer, "Auto Boss Spawn9", false, function(value)
+        if value then
+            task.spawn(function()
+                while value do
+                    pcall(function()
+                        for _, v in ipairs(workspace.Main.NPCs["Boss Spawn9"]:GetDescendants()) do
+                            if v:IsA("ProximityPrompt") then
+                                v.MaxActivationDistance = 9999
+                                v.HoldDuration = 0
+                                fireproximityprompt(v)
+                            end
+                        end
+                    end)
+                    task.wait(1)
+                end
+            end)
+        end
+    end)
+
     mainList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         updateSize(mainContainer, mainList)
     end)
     updateSize(mainContainer, mainList)
 end
 
--- Combat tab toggles
+-- Combat tab
 local hakiEnabled = false
 local observationEnabled = false
-local autoM1Enabled = false
+local autoM1SpecialEnabled = false
+local autoM1SwordEnabled = false
 
 makeToggle(combatContainer, "Auto Haki", false, function(value)
     hakiEnabled = value
@@ -315,8 +328,14 @@ makeToggle(combatContainer, "Auto Observation Haki", false, function(value)
     observationEnabled = value
 end)
 
-makeToggle(combatContainer, "Auto M1", false, function(value)
-    autoM1Enabled = value
+makeLabel(combatContainer, "  ⚔ Auto M1")
+
+makeToggle(combatContainer, "Auto M1 Special", false, function(value)
+    autoM1SpecialEnabled = value
+end)
+
+makeToggle(combatContainer, "Auto M1 Sword", false, function(value)
+    autoM1SwordEnabled = value
 end)
 
 combatList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -326,7 +345,6 @@ combatList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 end)
 
 -- Skills tab
--- Weapons list per skill type
 local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh"}
 local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff", "Samurai Triple Katana"}
 
@@ -364,14 +382,13 @@ skillsList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     skillsScroll.CanvasSize = UDim2.new(0, 0, 0, h)
 end)
 
--- Tab switching
 local activeTab = isRaid and "combat" or "main"
 local MAX_HEIGHT = 300
 
-local COLOR_ACTIVE_MAIN    = Color3.fromRGB(70, 130, 220)
-local COLOR_ACTIVE_COMBAT  = Color3.fromRGB(150, 70, 220)
-local COLOR_ACTIVE_SKILLS  = Color3.fromRGB(220, 150, 50)
-local COLOR_INACTIVE       = Color3.fromRGB(50, 50, 50)
+local COLOR_ACTIVE_MAIN   = Color3.fromRGB(70, 130, 220)
+local COLOR_ACTIVE_COMBAT = Color3.fromRGB(150, 70, 220)
+local COLOR_ACTIVE_SKILLS = Color3.fromRGB(220, 150, 50)
+local COLOR_INACTIVE      = Color3.fromRGB(50, 50, 50)
 
 local function switchTab(tab)
     activeTab = tab
@@ -381,7 +398,6 @@ local function switchTab(tab)
     if mainTabBtn then mainTabBtn.BackgroundColor3 = COLOR_INACTIVE end
     if combatTabBtn then combatTabBtn.BackgroundColor3 = COLOR_INACTIVE end
     if skillsTabBtn then skillsTabBtn.BackgroundColor3 = COLOR_INACTIVE end
-
     if tab == "main" then
         mainContainer.Visible = true
         if mainTabBtn then mainTabBtn.BackgroundColor3 = COLOR_ACTIVE_MAIN end
@@ -467,19 +483,39 @@ task.spawn(function()
     end
 end)
 
--- Auto M1
+-- Auto M1 Special (Combat type - Gilgamesh etc)
 task.spawn(function()
     while task.wait() do
-        if autoM1Enabled then
+        if autoM1SpecialEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Combat", "M1s", "Gilgamesh", 4)
                 remote:FireServer("Server", "Combat", "M1s", "Megumi", 4)
+                remote:FireServer("Server", "Combat", "M1s", "Hakari", 4)
+                remote:FireServer("Server", "Combat", "M1s", "Dante", 4)
             end)
         end
     end
 end)
 
--- Skills loops (Z/X/C/V/F fire all weapons)
+-- Auto M1 Sword
+task.spawn(function()
+    while task.wait() do
+        if autoM1SwordEnabled then
+            pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
+                remote:FireServer("Server", "Sword", "M1s", "Samurai Triple Katana", 1)
+                remote:FireServer("Server", "Sword", "M1s", "Demon Lord's Dual Dagger", 1)
+                remote:FireServer("Server", "Sword", "M1s", "Yamato", 1)
+                remote:FireServer("Server", "Sword", "M1s", "Dragon Slayer", 1)
+                remote:FireServer("Server", "Sword", "M1s", "Frieren's Staff", 1)
+                remote:FireServer("Server", "Sword", "M1s", "Inverted Spear of Heaven", 1)
+            end)
+        end
+    end
+end)
+
+-- Skills loops
 local skillMap = {
     {flag = function() return zEnabled end, key = "Skill1"},
     {flag = function() return xEnabled end, key = "Skill2"},
@@ -490,15 +526,13 @@ local skillMap = {
 
 for _, entry in ipairs(skillMap) do
     task.spawn(function()
-        while task.wait() do
+        while task.wait(0.1) do
             if entry.flag() then
                 pcall(function()
                     local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                    -- Combat weapons
                     for _, w in ipairs(combatWeapons) do
                         remote:FireServer("Server", "Combat", entry.key, w)
                     end
-                    -- Sword weapons
                     for _, w in ipairs(swordWeapons) do
                         remote:FireServer("Server", "Sword", entry.key, w)
                     end
