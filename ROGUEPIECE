@@ -8,7 +8,7 @@ local isRaid = game.PlaceId == 96105075537655
 if not isMainGame and not isRaid then return end
 
 -- ✏️ ADD YOUR WEAPONS HERE
-local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh", "Qin Shi", "Garou", "Akaza (Final Form)"}
+local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh", "Qin Shi", "Garou", "Akaza (Final Form)", "Naoya"}
 local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff", "Samurai Triple Katana", "Los lobos"}
 
 local screenGui = Instance.new("ScreenGui")
