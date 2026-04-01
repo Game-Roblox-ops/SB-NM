@@ -345,7 +345,7 @@ combatList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 end)
 
 -- Skills tab
-local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh", "Qin Shi", "Garou"}
+local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh", "Qin Shi", "Garou", "Akaza (Final Form)"}
 local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff", "Samurai Triple Katana", "Los lobos"}
 
 local zEnabled = false
