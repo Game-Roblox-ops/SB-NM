@@ -7,6 +7,10 @@ local isRaid = game.PlaceId == 96105075537655
 
 if not isMainGame and not isRaid then return end
 
+-- ✏️ ADD YOUR WEAPONS HERE
+local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh", "Qin Shi", "Garou", "Akaza (Final Form)"}
+local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff", "Samurai Triple Katana", "Los Lobos"}
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "MobileUI"
 screenGui.ResetOnSpawn = false
@@ -314,7 +318,7 @@ if isMainGame then
     updateSize(mainContainer, mainList)
 end
 
--- Combat tab
+-- Combat toggles
 local hakiEnabled = false
 local observationEnabled = false
 local autoM1SpecialEnabled = false
@@ -344,10 +348,7 @@ combatList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     combatScroll.CanvasSize = UDim2.new(0, 0, 0, h)
 end)
 
--- Skills tab
-local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh", "Qin Shi", "Garou", "Akaza (Final Form)"}
-local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff", "Samurai Triple Katana", "Los lobos"}
-
+-- Skills toggles
 local zEnabled = false
 local xEnabled = false
 local cEnabled = false
@@ -356,25 +357,11 @@ local fEnabled = false
 
 makeLabel(skillsContainer, "  ⚔ Combined Skill Keys")
 
-makeToggle(skillsContainer, "Auto Z  (Skill1 - All)", false, function(value)
-    zEnabled = value
-end)
-
-makeToggle(skillsContainer, "Auto X  (Skill2 - All)", false, function(value)
-    xEnabled = value
-end)
-
-makeToggle(skillsContainer, "Auto C  (Skill3 - All)", false, function(value)
-    cEnabled = value
-end)
-
-makeToggle(skillsContainer, "Auto V  (Skill4 - All)", false, function(value)
-    vEnabled = value
-end)
-
-makeToggle(skillsContainer, "Auto F  (Skill5 - All)", false, function(value)
-    fEnabled = value
-end)
+makeToggle(skillsContainer, "Auto Z  (Skill1 - All)", false, function(value) zEnabled = value end)
+makeToggle(skillsContainer, "Auto X  (Skill2 - All)", false, function(value) xEnabled = value end)
+makeToggle(skillsContainer, "Auto C  (Skill3 - All)", false, function(value) cEnabled = value end)
+makeToggle(skillsContainer, "Auto V  (Skill4 - All)", false, function(value) vEnabled = value end)
+makeToggle(skillsContainer, "Auto F  (Skill5 - All)", false, function(value) fEnabled = value end)
 
 skillsList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     local h = skillsList.AbsoluteContentSize.Y + 8
@@ -483,39 +470,35 @@ task.spawn(function()
     end
 end)
 
--- Auto M1 Special (Combat type - Gilgamesh etc)
+-- Auto M1 Special (uses combatWeapons list)
 task.spawn(function()
     while task.wait() do
         if autoM1SpecialEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Combat", "M1s", "Gilgamesh", 4)
-                remote:FireServer("Server", "Combat", "M1s", "Megumi", 4)
-                remote:FireServer("Server", "Combat", "M1s", "Hakari", 4)
-                remote:FireServer("Server", "Combat", "M1s", "Dante", 4)
+                for _, w in ipairs(combatWeapons) do
+                    remote:FireServer("Server", "Combat", "M1s", w, 4)
+                end
             end)
         end
     end
 end)
 
--- Auto M1 Sword
+-- Auto M1 Sword (uses swordWeapons list)
 task.spawn(function()
     while task.wait() do
         if autoM1SwordEnabled then
             pcall(function()
                 local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Serverside")
-                remote:FireServer("Server", "Sword", "M1s", "Samurai Triple Katana", 1)
-                remote:FireServer("Server", "Sword", "M1s", "Demon Lord's Dual Dagger", 1)
-                remote:FireServer("Server", "Sword", "M1s", "Yamato", 1)
-                remote:FireServer("Server", "Sword", "M1s", "Dragon Slayer", 1)
-                remote:FireServer("Server", "Sword", "M1s", "Frieren's Staff", 1)
-                remote:FireServer("Server", "Sword", "M1s", "Inverted Spear of Heaven", 1)
+                for _, w in ipairs(swordWeapons) do
+                    remote:FireServer("Server", "Sword", "M1s", w, 1)
+                end
             end)
         end
     end
 end)
 
--- Skills loops
+-- Skills loops (uses both lists automatically)
 local skillMap = {
     {flag = function() return zEnabled end, key = "Skill1"},
     {flag = function() return xEnabled end, key = "Skill2"},
