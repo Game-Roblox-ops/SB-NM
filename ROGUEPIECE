@@ -293,6 +293,18 @@ if isMainGame then
         end)
     end)
 
+   makeToggle(mainContainer, "Delay Shop", false, function(value)
+    pcall(function()
+            local button = playerGui.Button["Delay Shop"]
+            button.Visible = value
+            button.Position = UDim2.new(0.400000006, 1, 0, 0)
+            button.Size = UDim2.new(0.100000001, 20, 0.200000003, 25)
+        end)
+    end)
+    end)
+end)
+
+
     makeToggle(mainContainer, "Auto Boss Spawn9", false, function(value)
         if value then
             task.spawn(function()
