@@ -9,7 +9,7 @@ if not isMainGame and not isRaid then return end
 
 -- ✏️ ADD YOUR WEAPONS HERE
 local combatWeapons = {"Megumi", "Hakari", "Dante", "Gilgamesh", "Qin Shi", "Garou", "Akaza (Final Form)", "Naoya", "Shadow", "Gojo (Shibuya)", "Aizen (TYBW)", "Gojo"}
-local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff", "Samurai Triple Katana", "Los lobos", "Dual Dagger", "Divine Bident", "Yami's Katana", "Demon King's Longsword", "Dark Blade", "Venuzdonoa", "Kafka's Katana", "Kusanagi", "Herta's Hammer", "Escanor", "Gryphon"}
+local swordWeapons  = {"Inverted Spear of Heaven", "Demon Lord's Dual Dagger", "Yamato", "Dragon Slayer", "Frieren's Staff", "Samurai Triple Katana", "Los lobos", "Dual Dagger", "Divine Bident", "Yami's Katana", "Demon King's Longsword", "Dark Blade", "Venuzdonoa", "Kafka's Katana", "Kusanagi", "Herta's Hammer", "Escanor", "Gryphon", "Kafka's Katana",}
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "MobileUI"
